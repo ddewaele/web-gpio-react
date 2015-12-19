@@ -18,7 +18,7 @@ These include
 - public/css/base.css
 - public/scripts/main.js
 
-Our index.html looks like thiss
+Our index.html looks like this :
 
 ```
 <!DOCTYPE html>
@@ -62,9 +62,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.listen(app.get('port'), function() {
   console.log('Server started: http://localhost:' + app.get('port') + '/');
 });
-```s
+```
 
-2. Provide a gitignore file
+4. Provide a gitignore file
 
 I also added a [.gitignore file](https://github.com/facebook/react/blob/master/.gitignore) to this repo.
 
