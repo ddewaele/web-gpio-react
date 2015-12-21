@@ -5,6 +5,9 @@ Sample ReactJS project acting as a frontend for my UDOO
 ![overview](./docs/overview-small.png)
 
 
+
+![overview](./docs/screenshot1.png)
+
 # Project setup
 
 This project was setup by doing executing following steps :
