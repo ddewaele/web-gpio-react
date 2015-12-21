@@ -16,7 +16,7 @@ var GpioList = React.createClass({
   	var apiPath = this.props.apiPath;
 	var gpioNodes = this.props.gpios.map(function(gpio) {
       return (
-        <Gpio pin={gpio.pin} gpio={gpio.gpio} description={gpio.description} apiPath={apiPath}/>
+        <Gpio key={gpio.pin} pin={gpio.pin} gpio={gpio.gpio} description={gpio.description} apiPath={apiPath}/>
       );
     });
     
@@ -110,14 +110,14 @@ var Gpio = React.createClass({
 });
 
 var gpios = [
-	{"key":1, "pin":"13","gpio":"102","description":"pin 13 inner bank"},
-	{"key":2, "pin":"12","gpio":"100","description":"pin 12 inner bank"},
-	{"key":3, "pin":"11","gpio":"147","description":"pin 11 inner bank"},
-	{"key":3, "pin":"8","gpio":"105","description":"pin 8 inner bank"},
-	{"key":4, "pin":"2","gpio":"104","description":"pin 2 inner bank"},
-	{"key":5, "pin":"3","gpio":"143","description":"pin 3 inner bank"},
-	{"key":6, "pin":"4","gpio":"142","description":"pin 4 inner bank"},
-	{"key":7, "pin":"42","gpio":"127","description":"pin 42 outer bank"}
+	{"pin":"13","gpio":"102","description":"pin 13 inner bank"},
+	{"pin":"12","gpio":"100","description":"pin 12 inner bank"},
+	{"pin":"11","gpio":"147","description":"pin 11 inner bank"},
+	{"pin":"8","gpio":"105","description":"pin 8 inner bank"},
+	{"pin":"2","gpio":"104","description":"pin 2 inner bank"},
+	{"pin":"3","gpio":"143","description":"pin 3 inner bank"},
+	{"pin":"4","gpio":"142","description":"pin 4 inner bank"},
+	{"pin":"42","gpio":"127","description":"pin 42 outer bank"}
 ];
 
 
