@@ -79,6 +79,12 @@ I also added a [.gitignore file](https://github.com/facebook/react/blob/master/.
 
 # UDOO integration
 
+## haProxy
+
+
+wget http://ports.ubuntu.com/ubuntu-ports/pool/main/h/haproxy/haproxy_1.4.24-2ubuntu0.4_armhf.deb
+sudo dpkg -i haproxy_1.4.24-2ubuntu0.4_armhf.deb 
+
 ## GPIOs
 
 The GPIOs we'll be working with are defined in our javascript like this :
