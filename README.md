@@ -4,6 +4,8 @@ Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI.
 
 **Work in progress**
 
+[Live app](http://ddewaele.github.io/udoo-gpio-react) (Github pages)
+
 ## Screenshots
 
 ![overview](./docs/screenshot1.png)
