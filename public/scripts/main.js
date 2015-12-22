@@ -1,43 +1,118 @@
+ const MASTERLISTITEM_SELECTION = "masterListItemSelection";
+
+
 /*
  | Our main board. 
  | 
- | Top-level object.
+ | Top-level object. Displays the board name, image, divs and detail pane.
  |
  */
  var Board = React.createClass({
 
  	render: function() {
  		return (
- 			<div className="board">
- 			<h1>{this.props.boardConfig.name}</h1>
+			<div className="parent">
+	 			<div className="board">
+		 			<h1>{this.props.boardConfig.name}</h1>
 
- 			<DetailPane apiPath={this.props.apiPath}/>
+		 			<DetailPane apiPath={this.props.apiPath}/>
 
- 			<div className="boardcontainer">
- 			<GpioDivList boardConfig={this.props.boardConfig}/>
- 			<img src={this.props.boardConfig.imageUrl}/>
- 			</div>
+		 			<div className="boardcontainer">
+			 			<GpioDivList boardConfig={this.props.boardConfig}/>
+			 			<img src={this.props.boardConfig.imageUrl}/>
+					</div>
+	 			</div>
 
  			</div>
  		);
  	}
  });
 
+
+var BoardSelection = React.createClass({
+
+
+     getInitialState: function() {
+         return {
+             value: "boardConfigNeo"
+         }
+     },
+     change: function(event){
+         this.setState({value: event.target.value});
+     },
+     render: function(){
+
+     	var boardOptionsArr = [];
+		for (var property in this.props.boardOptions) {
+		    if (this.props.boardOptions.hasOwnProperty(property)) {
+		        boardOptionsArr.push(
+		        	{"value":property,"label":this.props.boardOptions[property].name}
+		        );
+		    }
+		}
+
+     	var boardOptions2 = boardOptionsArr.map(function(boardOption) {
+ 			return (
+ 				<BoardOption key={boardOption.value} value={boardOption.value} label={boardOption.label} />
+ 			);
+ 		});
+
+        return(
+           <div>
+               <select id="lang" onChange={this.change} value={this.state.value}>
+                  <option value="select">Select</option>
+			        {boardOptions2}
+               </select>
+                <Board apiPath="/udooneorest" boardConfig={this.props.boardOptions[this.state.value]}/>
+           </div>
+        );
+     }
+
+
+});
+
+var BoardOption = React.createClass({
+	render: function() {
+		return (
+			<option value={this.props.value}>{this.props.label}</option>
+		);
+	}
+});
+/*
+ | Our detail pane is responsible for rendering a single GPIO definition.
+ | 
+ | Based on the selected gpio object (define) , a <Gpio> component is rendered.
+ |
+ */
  var DetailPane = React.createClass({
 
  	getInitialState: function() {
- 		return {selectedGpio: gpios[0]};
+ 		return {selectedGpio: null};
  	},
+
+
+ 	// We'll be receiving events from the boards gpioList.
+ 	//
+ 	// The payload contains the following: 
+ 	// data.gpioDiv : Object {location: "J6_6_1", pin: "11", gpio: "147", description: "pin 11 inner bank"}
+ 	componentDidMount: function() {
+
+ 		var that = this;
+		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
+			that.setState({selectedGpio:data.gpioDiv});
+		});
+
+ 	},
+
+ 	componentDidUnMount: function() {
+		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
+ 	},  	
 
  	render: function() {
  		return (
-
  			<div className="detailPane" style={{float:"right", width:"300px"}}>
- 			<h2>Detail pane</h2>
- 			<div id="detailText"/>
-
- 			<p>Not sure how to change this state from the gpio selection</p>
- 			{this.state.selectedGpio && <Gpio key={this.state.selectedGpio.pin} pin={this.state.selectedGpio.pin} gpio={this.state.selectedGpio.gpio} description={this.state.selectedGpio.description} apiPath={this.props.apiPath}/>}
+	 			<h2>Detail pane</h2>
+	 			{this.state.selectedGpio && <Gpio key={this.state.selectedGpio.pin} pin={this.state.selectedGpio.pin} gpio={this.state.selectedGpio.gpio} description={this.state.selectedGpio.description} apiPath={this.props.apiPath}/>}
  			</div>
 
  		);
@@ -57,7 +132,7 @@
  	render: function() {
 
  		var apiPath = this.props.apiPath;
- 		var gpioNodes = this.props.gpios.map(function(gpio) {
+ 		var gpioNodes = this.props.boardConfig.gpios.map(function(gpio) {
  			return (
  				<Gpio key={gpio.pin} pin={gpio.pin} gpio={gpio.gpio} description={gpio.description} apiPath={apiPath}/>
  			);
@@ -76,7 +151,7 @@
 
 /*
  |
- | Represents the contianer object that renders a list of GpioDiv objects.
+ | Represents the container object that renders a list of GpioDiv objects.
  | 
  */
  var GpioDivList = React.createClass({
@@ -86,73 +161,72 @@
  		return {selectedGpioDiv: null};
  	},
 
+ 	componentDidMount: function() {
+
+ 		var that = this;
+		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
+			that.setState({selectedgpioDiv:data.gpioDiv});
+		});
+
+ 	},
+
+ 	componentDidUnMount: function() {
+		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
+ 	},  	
+
+ 	// Here we are constructing gpioDiv objects. 
+ 	// These are POJOs used to render the actual <GpioDiv> components
  	constructGpioDivs: function() {
 
  		var gpioHeaders = this.props.boardConfig.headers;
+
+
+ 		var gpios = this.props.boardConfig.gpios;
+ 		var gpioArrayLength = gpios.length;
+ 		
+ 		var gpioMap = {};
+
+		
+ 		for (var g = 0; g < gpioArrayLength; g++) { // for each gpio
+ 			gpioMap[gpios[g].location] = gpios[g];
+ 		}
+
  		var arrayLength = gpioHeaders.length;
 
  		var gpioDivs = [];
 
- 		for (var i = 0; i < arrayLength; i++) {
+ 		for (var i = 0; i < arrayLength; i++) { // for each header
 
  			var header = gpioHeaders[i];
  			var beginX = header.xyCoords[0];
  			var beginY = header.xyCoords[1];
 
- 			for (var j = 0; j < header.rows ; j++) {
- 				for (var k = 0; k < header.cols ; k++) {
+ 			for (var j = 0; j < header.rows ; j++) { // for each row
+ 				for (var k = 0; k < header.cols ; k++) { // for each column
+
+ 					var pin = header.name + "_" + j + "_" + k;
  					gpioDivs.push({
- 						"pin":header.name + "_" + j + "_" + k,
+ 						"pin":pin,
  						"x":beginX + (j * header.spaceX),
- 						"y":beginY + (k * header.spaceY)
+ 						"y":beginY + (k * header.spaceY),
+ 						"gpio":gpioMap[pin]
  					})
  				}
 
  			}
  		}
 
+
  		return gpioDivs;
 
  	},
-
-	// HELP: STUCK : seems weird to be passing gpioDiv here (the react component). need to drill down via props to the actual gpioDiv pojo.
-	// HELP: STUCK : the distinction between working with components and their state is not always clear.
-	selectGioDiv: function(gpioDiv) {
-		console.log("selectGioDiv : " + gpioDiv); // this is the react component
-
-		this.setState({selectedGpioDiv:gpioDiv.props.gpioDiv});
-
-		//gpioDiv.select();
-
-		$("#detailText").text("Selected " + gpioDiv.props.gpioDiv.pin);
-		
-
-		// HELP:STUCK .... how do I select a single GPIO and take care of unselecting the rest.
-		// HELP:STUCK .... where should I put the select logic , the state , and the selecting / unselecting of the gpiodivs.
-		// var children = gpioDiv.parent.children;
-		// var arrayLength = children.length;
-		// for (var i = 0; i < arrayLength; i++) {
-		// 	children[i].unselect();
-		// }
-
-
-	},
-
-	// HELP: STUCK : seems weird to use the pin state to determine if a given gpioDiv is selected or not.
-
-	isGpioDivSelected: function(gpioDiv) {
-		if (this.state.selectedGpioDiv==null) return false;
-		return (gpioDiv.pin === this.state.selectedGpioDiv.pin)
-	},
 
 	render: function() {
 		var that = this;
 		var divNodes = this.constructGpioDivs().map(function(gpioDiv) {
 
 			return (
-
-				<GpioDiv ref={gpioDiv.pin} key={gpioDiv.pin} gpioDiv={gpioDiv} selectGioDiv={that.selectGioDiv} isGpioDivSelected={that.isGpioDivSelected}/>	       
-
+				<GpioDiv key={gpioDiv.pin} gpioDiv={gpioDiv} />
 			);
 
 		});
@@ -178,40 +252,69 @@
  */
  var GpioDiv = React.createClass({
 
-	// HELP: STUCK - intially I had put the selected state here. 
-	// I then moved the state to the parent component (GpioDivList) cause I needed to reference it against other GpioDiv objects.
-
-	// getInitialState: function() {
-	// 	return {selected: false};
- 	// },
-
-
-
- 	gpioSelected: function(pin) {
- 		this.props.selectGioDiv(this);		
+ 	getInitialState: function() {
+ 		return {selectedGpioDiv: null};
  	},
 
-	// select: function() {
-	// 	this.setState({selected:true});
-	// },
+ 	//
+ 	// Here we've clicked on a div. 
+ 	// This div corresponds with an actual gpio object 	
+ 	// 
+ 	//
+ 	gpioSelected: function() {
+ 		if (this.props.gpioDiv.gpio) {
+ 			CustomEvents.notify(MASTERLISTITEM_SELECTION, {gpioDiv:this.props.gpioDiv.gpio});
+ 		} else {
+ 			console.log("gpio " + this.props.gpioDiv.pin + " disabled")
+ 		}
+ 		//this.props.selectGioDiv(this);		
+ 	},
 
-	// unselect: function() {
-	// 	this.setState({selected:false});
-	// },
+	//
+	// this.props.gpioDiv : Object {pin: "J6_0_0", x: 210, y: 48, gpio: undefined}
+	// data.gpioDiv : Object {location: "J6_4_1", pin: "13", gpio: "102", description: "pin 13 inner bank"}
+ 	componentDidMount: function() {
 
-	// HELP: STUCK : the check to see if a GPIO is selected is done on the list level (Correct) ?
+ 		var that = this;
+ 		
+ 		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
+ 			console.log("gpioDiv setting state " + data.gpioDiv.pin);
+			that.setState({selectedGpioDiv:data.gpioDiv});
+		});
+
+ 	},
+
+ 	componentDidUnMount: function() {
+		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
+ 	}, 
+
 	isSelected: function() {
-		return this.props.isGpioDivSelected(this.props.gpioDiv);
+		if (!this.state.selectedGpioDiv) return false;
+		return this.props.gpioDiv.pin === this.state.selectedGpioDiv.location;
 	},
 
 	render: function() {
+
+		var backgroundColor;
+
+		console.log("Rendering " + this.props.gpioDiv.pin + " - " + ((this.state.selectedgpioDiv) ? this.state.selectedgpioDiv.pin : ""));
+		if (!this.props.gpioDiv.gpio) {
+			backgroundColor = "grey";
+		} else {
+			if (this.isSelected()) {
+				backgroundColor = "red";	
+			} else {
+				backgroundColor = "green";
+			} 
+		}
+
 
 		var divStyle = {
 			width: "15px",
 			height: "15px",
 			left: this.props.gpioDiv.x + "px",
 			top: this.props.gpioDiv.y + "px",
-			backgroundColor: (this.isSelected() ? "red" : "green")
+			 backgroundColor: backgroundColor
 		};
 
 		return (
@@ -222,7 +325,7 @@
 });
 
 /*
- | Represents a single GPIO.
+ | <Gpio> component representing a single GPIO.
  |
  | Renders a detail pane allowing us to perform the following actions on the GPIO
  |
@@ -298,53 +401,44 @@
  		return (
  			<table>
  			<tbody>
+
  			<tr>
  			<td>Pin</td><td>{this.props.pin}</td>
  			</tr>
  			<tr>
  			<td>Description</td><td>{this.props.description}</td>
  			</tr>
- 			<tr>
 
+ 			<tr>
  			<td>Set</td><td><div onClick={this.toggleGpio.bind(this,true)}>ON</div></td>
  			</tr>
- 			<tr>
 
+ 			<tr>
  			<td>Set</td><td><div onClick={this.toggleGpio.bind(this,false)}>OFF</div></td>
  			</tr>
- 			<tr>
 
+ 			<tr>
  			<td>Export</td><td><div onClick={this.exportGpio}>Export</div></td>
  			</tr>
+
  			<tr>
  			<td>Direction</td><td><div onClick={this.changeGpioDirection.bind(this,"in")}>Input</div></td>
  			</tr>
- 			<tr>
 
+ 			<tr>
  			<td>Direction</td><td><div onClick={this.changeGpioDirection.bind(this,"out")}>Output</div></td>
  			</tr>
  			<tr>
-
  			<td>Value</td><td>{this.state.gpioValue}</td>
  			</tr>
+
  			</tbody>
  			</table>
  			);
  	}
  });
 
-var gpios = [
-{"location":"J6_5_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
-{"location":"J6_6_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
-{"location":"J6_7_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
-{"location":"J6_10_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
-{"location":"J4_6_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
-{"location":"J4_5_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
-{"location":"J4_4_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
-{"location":"J5_6_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
-];
-
-var boardConfig = {
+var boardConfigNeo = {
 	"name":"UDOO Neo",
 	"imageUrl":"./images/neo-top-view.png",
 	"headers":[
@@ -380,8 +474,83 @@ var boardConfig = {
 			"spaceX":25, 			
 			"spaceY":24				
 		}		    	    
+	],
+	"gpios": [
+		{"location":"J6_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
+		{"location":"J6_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
+		{"location":"J6_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
+		{"location":"J6_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
+		{"location":"J4_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
+		{"location":"J4_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
+		{"location":"J4_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
+		{"location":"J5_5_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
 	]
 
 }
 
-ReactDOM.render(<Board gpios={gpios} apiPath="/udooneorest" boardConfig={boardConfig}/>,document.getElementById('content'));
+var boardConfigPiZero = {
+	"name":"Raspberry PI Zero",
+	"imageUrl":"./images/rpi_zero.jpg",
+	"headers":[
+	{
+			"name":"J8", 			// the name of the header  (J6)
+			"xyCoords":[145,26],    // the top xy coords (210,45)
+		    "rows":20, 				// nr of rows (10)
+		    "cols":2, 				// nr of columns (2)
+		    "spaceX":35.5, 			// space between items on same row in px (25)
+		    "spaceY":38				// space between items on same column in px ()
+		},		
+		{
+			"name":"J5", 			
+			"xyCoords":[780,95],   
+			"rows":2, 				
+			"cols":2, 				
+			"spaceX":38, 			
+			"spaceY":38				
+		}		    	    
+	],
+	"gpios": [
+		{"location":"J8_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
+		{"location":"J8_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
+		{"location":"J8_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
+		{"location":"J8_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
+		{"location":"J8_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
+		{"location":"J8_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
+		{"location":"J8_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
+		{"location":"J5_1_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
+	]
+
+}
+
+var boardOptions = {
+	"boardConfigNeo":boardConfigNeo,
+	"boardConfigPiZero":boardConfigPiZero
+};
+
+var CustomEvents = (function() {
+  var _map = {};
+
+  return {
+    subscribe: function(name, cb) {
+      _map[name] || (_map[name] = []);
+      _map[name].push(cb);
+    },
+
+    unsubscribe: function(name) {
+    	delete _map[name];
+    },
+
+    notify: function(name, data) {
+      if (!_map[name]) {
+        return;
+      }
+
+      // if you want canceling or anything else, add it in to this cb loop
+      _map[name].forEach(function(cb) {
+        cb(data);
+      });
+    }
+  }
+})();
+
+ReactDOM.render(<BoardSelection boardOptions={boardOptions}/>,document.getElementById('content'));

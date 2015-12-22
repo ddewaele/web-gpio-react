@@ -1,12 +1,111 @@
 # Introduction
 
-Sample ReactJS project acting as a frontend for my UDOO
+Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI.
+
+**Work in progress**
+
+## Screenshots
+
+![overview](./docs/screenshot1.png)
+![overview](./docs/screenshot2.png)
+
+## Configuration
+
+By defining a board like this, a UI is rendered allowing you to interact with the GPIOs.
+
+```
+var boardConfigNeo = {
+  "name":"UDOO Neo",
+  "imageUrl":"./images/neo-top-view.png",
+  "headers":[
+  {
+      "name":"J6",      // the name of the header  (J6)
+      "xyCoords":[210,48],    // the top xy coords (210,45)
+        "rows":10,        // nr of rows (10)
+        "cols":2,         // nr of columns (2)
+        "spaceX":25,      // space between items on same row in px (25)
+        "spaceY":24       // space between items on same column in px ()
+    },    
+    {
+      "name":"J4",      
+      "xyCoords":[485,48],    
+      "rows":8,         
+      "cols":2,         
+      "spaceX":25,    
+      "spaceY":24       
+    },    
+    {
+      "name":"J7",      
+      "xyCoords":[536,567],   
+      "rows":6,         
+      "cols":2,         
+      "spaceX":25,      
+      "spaceY":24       
+    },  
+    {
+      "name":"J5",      
+      "xyCoords":[304,567],   
+      "rows":8,         
+      "cols":2,         
+      "spaceX":25,      
+      "spaceY":24       
+    }             
+  ],
+  "gpios": [
+    {"location":"J6_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
+    {"location":"J6_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
+    {"location":"J6_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
+    {"location":"J6_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
+    {"location":"J4_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
+    {"location":"J4_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
+    {"location":"J4_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
+    {"location":"J5_5_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
+  ]
+
+}
+
+var boardConfigPiZero = {
+  "name":"Raspberry PI Zero",
+  "imageUrl":"./images/rpi_zero.jpg",
+  "headers":[
+  {
+      "name":"J8",      // the name of the header  (J6)
+      "xyCoords":[145,26],    // the top xy coords (210,45)
+        "rows":20,        // nr of rows (10)
+        "cols":2,         // nr of columns (2)
+        "spaceX":35.5,      // space between items on same row in px (25)
+        "spaceY":38       // space between items on same column in px ()
+    },    
+    {
+      "name":"J5",      
+      "xyCoords":[780,95],   
+      "rows":2,         
+      "cols":2,         
+      "spaceX":38,      
+      "spaceY":38       
+    }             
+  ],
+  "gpios": [
+    {"location":"J8_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
+    {"location":"J8_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
+    {"location":"J8_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
+    {"location":"J8_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
+    {"location":"J8_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
+    {"location":"J8_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
+    {"location":"J8_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
+    {"location":"J5_1_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
+  ]
+
+}
+
+```
+
+## Server side setup
 
 ![overview](./docs/overview-small.png)
 
 
 
-![overview](./docs/screenshot1.png)
 
 # Project setup
 
