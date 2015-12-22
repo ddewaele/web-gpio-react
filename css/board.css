@@ -1,0 +1,12 @@
+.boardcontainer {
+   border: 1px solid #DDDDDD;
+   width: 200px;
+   height: 200px;
+   position: relative;
+}
+.gpioTag {
+   float: left;
+   position: absolute;
+   cursor: pointer; 
+   cursor: hand;
+}
