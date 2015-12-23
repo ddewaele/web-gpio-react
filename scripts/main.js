@@ -31,7 +31,6 @@
 
 var BoardSelection = React.createClass({
 
-
      getInitialState: function() {
          return {
              value: "boardConfigNeo"
@@ -57,12 +56,21 @@ var BoardSelection = React.createClass({
  			);
  		});
 
+   //   	var boardOptions2 = this.props.boardOptions.map(function(boardOption) {
+ 		// 	return (
+ 		// 		<BoardOption key={boardOption.key} value={boardOption.key} label={boardOption.value.name} />
+ 		// 	);
+ 		// });
+
         return(
            <div>
-               <select id="lang" onChange={this.change} value={this.state.value}>
+           <div className="input-group">
+  				<span className="input-group-addon" id="sizing-addon2">Select a board</span>
+               <select id="lang" className="form-control" onChange={this.change} value={this.state.value} aria-describedby="sizing-addon2">
                   <option value="select">Select</option>
 			        {boardOptions2}
                </select>
+            </div>
                 <Board apiPath="/udooneorest" boardConfig={this.props.boardOptions[this.state.value]}/>
            </div>
         );
@@ -96,23 +104,38 @@ var BoardOption = React.createClass({
  	// The payload contains the following: 
  	// data.gpioDiv : Object {location: "J6_6_1", pin: "11", gpio: "147", description: "pin 11 inner bank"}
  	componentDidMount: function() {
-
  		var that = this;
 		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
 			that.setState({selectedGpio:data.gpioDiv});
 		});
-
  	},
 
- 	componentDidUnMount: function() {
+ 	//
+ 	// Perhaps a weird hook to use, but the detail pane gets updated each time a gpioDiv was clicked.
+ 	// So at this point we expect to show the dialog.
+ 	//
+ 	// However, when the combo box changes (onChange event), it also triggers a component update. In this case however, the selectedGpio
+ 	// will still be the same. So only show the modal when we select a new gpio.
+ 	//
+ 	componentDidUpdate: function(prevProps,prevState) {
+ 		
+ 		if (this.state.selectedGpio!=prevState.selectedGpio) {
+	 		console.log("Showing gpioDetailModal " + $('#gpioDetailModal'));
+	 		$('#gpioDetailModal').modal('show');
+	 	}
+ 	},
+
+ 	componentWillUnmount: function() {
+ 		{{debugger}}
 		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
  	},  	
 
  	render: function() {
  		return (
- 			<div className="detailPane" style={{float:"right", width:"300px"}}>
-	 			<h2>Detail pane</h2>
-	 			{this.state.selectedGpio && <Gpio key={this.state.selectedGpio.pin} pin={this.state.selectedGpio.pin} gpio={this.state.selectedGpio.gpio} description={this.state.selectedGpio.description} apiPath={this.props.apiPath}/>}
+ 			<div>
+				{this.state.selectedGpio && 
+					<Gpio key={this.state.selectedGpio.pin} pin={this.state.selectedGpio.pin} gpio={this.state.selectedGpio.gpio} description={this.state.selectedGpio.description} apiPath={this.props.apiPath}/>
+				}
  			</div>
 
  		);
@@ -170,7 +193,7 @@ var BoardOption = React.createClass({
 
  	},
 
- 	componentDidUnMount: function() {
+ 	componentWillUnmount: function() {
 		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
  	},  	
 
@@ -267,9 +290,11 @@ var BoardOption = React.createClass({
  		} else {
  			console.log("gpio " + this.props.gpioDiv.pin + " disabled")
  		}
- 		//this.props.selectGioDiv(this);		
  	},
 
+	// When the DIV is rendered on the screen it starts listening for selection events.
+	// All DIVs will receive an event telling them what the selected div was.
+	// That way,  they can use that state to determine if the div was selected or not.
 	//
 	// this.props.gpioDiv : Object {pin: "J6_0_0", x: 210, y: 48, gpio: undefined}
 	// data.gpioDiv : Object {location: "J6_4_1", pin: "13", gpio: "102", description: "pin 13 inner bank"}
@@ -279,13 +304,18 @@ var BoardOption = React.createClass({
  		
  		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
  			console.log("gpioDiv setting state " + data.gpioDiv.pin);
-			that.setState({selectedGpioDiv:data.gpioDiv});
+ 			if (that.isMounted()) {
+				that.setState({selectedGpioDiv:data.gpioDiv});
+			}
 		});
 
  	},
 
- 	componentDidUnMount: function() {
-		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
+		//BUG: shows reactJS errors in console when commented.
+		//BUG: shows no reactJS errors in console when uncommented but fails to show detail pane
+		//BUG : Warning: setState(...): Can only update a mounted or mounting component. This usually means you called setState() on an unmounted component. This is a no-op. Please check the code for the GpioDiv component.
+ 	componentWillUnmount: function() {
+		//CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION); 
  	}, 
 
 	isSelected: function() {
@@ -297,7 +327,7 @@ var BoardOption = React.createClass({
 
 		var backgroundColor;
 
-		console.log("Rendering " + this.props.gpioDiv.pin + " - " + ((this.state.selectedgpioDiv) ? this.state.selectedgpioDiv.pin : ""));
+		//console.log("Rendering " + this.props.gpioDiv.pin + " - " + ((this.state.selectedgpioDiv) ? this.state.selectedgpioDiv.pin : ""));
 		if (!this.props.gpioDiv.gpio) {
 			backgroundColor = "grey";
 		} else {
@@ -318,7 +348,7 @@ var BoardOption = React.createClass({
 		};
 
 		return (
-			<div className="gpioTag" style={divStyle} onClick={this.gpioSelected}/>
+			<div className="gpioTag" style={divStyle} onClick={this.gpioSelected} />
 		);
 	}
 
@@ -399,133 +429,70 @@ var BoardOption = React.createClass({
  	render: function() {
 
  		return (
- 			<table>
- 			<tbody>
 
- 			<tr>
- 			<td>Pin</td><td>{this.props.pin}</td>
- 			</tr>
- 			<tr>
- 			<td>Description</td><td>{this.props.description}</td>
- 			</tr>
+			<div className="modal fade" id="gpioDetailModal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel">
+			  <div className="modal-dialog" role="document">
+			    <div className="modal-content">
+			      <div className="modal-header">
+			        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 className="modal-title" id="myModalLabel">Pin details</h4>
+			      </div>
+			      <div className="modal-body">
+					<p>
+					Here you can export a GPIO, change its direction, or get/set its value.
+					</p>
 
- 			<tr>
- 			<td>Set</td><td><div onClick={this.toggleGpio.bind(this,true)}>ON</div></td>
- 			</tr>
+					<table className="table table-bordered table-striped">
+					   <tbody>
+							<tr>
+								<th className="text-nowrap" scope="row">PIN</th>
+								<td>{this.props.pin}</td>
+							</tr>
+							<tr>
+								<th className="text-nowrap" scope="row">Description</th>
+								<td>{this.props.description}</td>
+							</tr>
 
- 			<tr>
- 			<td>Set</td><td><div onClick={this.toggleGpio.bind(this,false)}>OFF</div></td>
- 			</tr>
+							<tr>
+								<th className="text-nowrap" rowSpan="2" scope="row">Set</th>
+								<td><button type="button" className="btn btn-default" onClick={this.toggleGpio.bind(this,true)}>ON</button></td>
+							</tr>
 
- 			<tr>
- 			<td>Export</td><td><div onClick={this.exportGpio}>Export</div></td>
- 			</tr>
+							<tr>
+								<td><button type="button" className="btn btn-default" onClick={this.toggleGpio.bind(this,false)}>OFF</button></td>
+							</tr>
 
- 			<tr>
- 			<td>Direction</td><td><div onClick={this.changeGpioDirection.bind(this,"in")}>Input</div></td>
- 			</tr>
+							<tr>
+								<th className="text-nowrap" scope="row">Export</th>
+								<td><button type="button" className="btn btn-default" onClick={this.exportGpio}>Export</button></td>
+							</tr>
 
- 			<tr>
- 			<td>Direction</td><td><div onClick={this.changeGpioDirection.bind(this,"out")}>Output</div></td>
- 			</tr>
- 			<tr>
- 			<td>Value</td><td>{this.state.gpioValue}</td>
- 			</tr>
+							<tr>
+								<th className="text-nowrap" rowSpan="2" scope="row">Direction</th>
+								<td><button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"in")}>Input</button></td>
+							</tr>
 
- 			</tbody>
- 			</table>
+							<tr>
+								<td><button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"out")}>Output</button></td>
+							</tr>
+							<tr>
+								<th className="text-nowrap" scope="row">Value</th>
+								<td>{this.state.gpioValue}</td>
+							</tr>      
+					   </tbody>
+					</table>
+
+			      </div>
+			      <div className="modal-footer">
+			        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" className="btn btn-primary">Save changes</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
  			);
  	}
  });
-
-var boardConfigNeo = {
-	"name":"UDOO Neo",
-	"imageUrl":"./images/neo-top-view.png",
-	"headers":[
-	{
-			"name":"J6", 			// the name of the header  (J6)
-			"xyCoords":[210,48],    // the top xy coords (210,45)
-		    "rows":10, 				// nr of rows (10)
-		    "cols":2, 				// nr of columns (2)
-		    "spaceX":25, 			// space between items on same row in px (25)
-		    "spaceY":24				// space between items on same column in px ()
-		},		
-		{
-			"name":"J4", 			
-			"xyCoords":[485,48],    
-			"rows":8, 				
-			"cols":2, 				
-			"spaceX":25, 		
-			"spaceY":24				
-		},		
-		{
-			"name":"J7", 			
-			"xyCoords":[536,567],   
-			"rows":6, 				
-			"cols":2, 				
-			"spaceX":25, 			
-			"spaceY":24				
-		},	
-		{
-			"name":"J5", 			
-			"xyCoords":[304,567],   
-			"rows":8, 				
-			"cols":2, 				
-			"spaceX":25, 			
-			"spaceY":24				
-		}		    	    
-	],
-	"gpios": [
-		{"location":"J6_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
-		{"location":"J6_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
-		{"location":"J6_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
-		{"location":"J6_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
-		{"location":"J4_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
-		{"location":"J4_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
-		{"location":"J4_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
-		{"location":"J5_5_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
-	]
-
-}
-
-var boardConfigPiZero = {
-	"name":"Raspberry PI Zero",
-	"imageUrl":"./images/rpi_zero.jpg",
-	"headers":[
-	{
-			"name":"J8", 			// the name of the header  (J6)
-			"xyCoords":[145,26],    // the top xy coords (210,45)
-		    "rows":20, 				// nr of rows (10)
-		    "cols":2, 				// nr of columns (2)
-		    "spaceX":35.5, 			// space between items on same row in px (25)
-		    "spaceY":38				// space between items on same column in px ()
-		},		
-		{
-			"name":"J5", 			
-			"xyCoords":[780,95],   
-			"rows":2, 				
-			"cols":2, 				
-			"spaceX":38, 			
-			"spaceY":38				
-		}		    	    
-	],
-	"gpios": [
-		{"location":"J8_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
-		{"location":"J8_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
-		{"location":"J8_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
-		{"location":"J8_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
-		{"location":"J8_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
-		{"location":"J8_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
-		{"location":"J8_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
-		{"location":"J5_1_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
-	]
-
-}
-
-var boardOptions = {
-	"boardConfigNeo":boardConfigNeo,
-	"boardConfigPiZero":boardConfigPiZero
-};
 
 var CustomEvents = (function() {
   var _map = {};
@@ -553,4 +520,4 @@ var CustomEvents = (function() {
   }
 })();
 
-ReactDOM.render(<BoardSelection boardOptions={boardOptions}/>,document.getElementById('content'));
+ReactDOM.render(<BoardSelection boardOptions={boardOptions}/>,document.getElementById('content2'));
