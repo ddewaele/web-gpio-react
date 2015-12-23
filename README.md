@@ -17,14 +17,15 @@ Start the server
 web-gpio-react
 ```
 
-Goto http://localhost:3000/
+Point your browser to [http://localhost:3000/](http://localhost:3000/)
 
 [Live app](http://ddewaele.github.io/web-gpio-react) (Github pages)
 
 ## Screenshots
 
-![overview](./docs/screenshot1.png)
-![overview](./docs/screenshot2.png)
+![overview](./docs/screenshot1a.png)
+![overview](./docs/screenshot2a.png)
+![overview](./docs/screenshot3a.png)
 
 ## Configuration
 
