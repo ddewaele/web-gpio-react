@@ -140,8 +140,8 @@ var boardConfigPiZero = {
 }
 
 var boardOptions = {
-	"boardConfigNeo":boardConfigNeo,
-	"boardConfigPiZero":boardConfigPiZero
+	"udoo-neo":boardConfigNeo,
+	"raspberrypi-zero":boardConfigPiZero
 };
 
 // var boardOptions = [

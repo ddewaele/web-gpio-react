@@ -1,32 +1,36 @@
 {
-  "name": "udoo-gpio-react",
+  "name": "web-gpio-react",
   "version": "0.0.0",
-  "description": "Web based GPIO manipulation for UDOO.",
-  "main": "server.js",
-  "dependencies": {
+  "description": "Web based GPIO manipulation for IoT proto boards.",
+  "bin": {
+    "web-gpio-react": "./bin/web-gpio-react"
+  },
+  "main": "./lib/server",
+  "scripts": {
+    "start": "web-gpio-react",
+    "stop": "pkill --signal SIGINT web-gpio-react"
+  },
+  "dependencies" : {
     "body-parser": "^1.4.3",
     "express": "^4.4.5"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ddewaele/udoo-gpio-react.git"
+    "url": "https://github.com/ddewaele/web-gpio-react.git"
   },
   "keywords": [
     "react",
     "tutorial",
     "udoo",
+    "raspberrypi",
     "gpio"
   ],
   "author": "ddewaele",
   "bugs": {
-    "url": "https://github.com/ddewaele/udoo-gpio-react/issues"
+    "url": "https://github.com/ddewaele/web-gpio-react/issues"
   },
-  "homepage": "https://github.com/ddewaele/udoo-gpio-react",
+  "homepage": "https://github.com/ddewaele/web-gpio-react",
   "engines" : {
     "node" : "0.12.x"
   }

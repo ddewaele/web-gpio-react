@@ -47,7 +47,7 @@ var BoardSelection = React.createClass({
 
      getInitialState: function() {
          return {
-             value: "boardConfigNeo"
+             value: "udoo-neo"
          }
      },
      change: function(event){
@@ -69,6 +69,7 @@ var BoardSelection = React.createClass({
  				<BoardOption key={boardOption.value} value={boardOption.value} label={boardOption.label} />
  			);
  		});
+
 
    //   	var boardOptions2 = this.props.boardOptions.map(function(boardOption) {
  		// 	return (
