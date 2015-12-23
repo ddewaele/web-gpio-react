@@ -9,6 +9,20 @@
  */
  var Board = React.createClass({
 
+ 	getInitialState: function() {
+ 		return {board:null};
+ 	},
+
+  	componentDidMount: function() {
+    	var component = this;
+    	
+    	$.get("./json/boards/udoo-neo.json", function(data) {
+      		//component.setState(data);
+      		console.log("Found board = " + data);
+    	});
+  	}, 	
+
+
  	render: function() {
  		return (
 			<div className="parent">
@@ -454,12 +468,11 @@ var BoardOption = React.createClass({
 							</tr>
 
 							<tr>
-								<th className="text-nowrap" rowSpan="2" scope="row">Set</th>
-								<td><button type="button" className="btn btn-default" onClick={this.toggleGpio.bind(this,true)}>ON</button></td>
-							</tr>
-
-							<tr>
-								<td><button type="button" className="btn btn-default" onClick={this.toggleGpio.bind(this,false)}>OFF</button></td>
+								<th className="text-nowrap" scope="row">Set</th>
+								<td>
+									<button type="button" className="btn btn-default" onClick={this.toggleGpio.bind(this,true)}>ON</button>
+									<button type="button" className="btn btn-default" onClick={this.toggleGpio.bind(this,false)}>OFF</button>
+								</td>
 							</tr>
 
 							<tr>
@@ -468,13 +481,13 @@ var BoardOption = React.createClass({
 							</tr>
 
 							<tr>
-								<th className="text-nowrap" rowSpan="2" scope="row">Direction</th>
-								<td><button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"in")}>Input</button></td>
+								<th className="text-nowrap" scope="row">Direction</th>
+								<td>
+									<button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"in")}>Input</button>
+									<button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"out")}>Output</button>
+								</td>
 							</tr>
 
-							<tr>
-								<td><button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"out")}>Output</button></td>
-							</tr>
 							<tr>
 								<th className="text-nowrap" scope="row">Value</th>
 								<td>{this.state.gpioValue}</td>
@@ -485,7 +498,6 @@ var BoardOption = React.createClass({
 			      </div>
 			      <div className="modal-footer">
 			        <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="button" className="btn btn-primary">Save changes</button>
 			      </div>
 			    </div>
 			  </div>
