@@ -31,8 +31,8 @@ Point your browser to [http://localhost:3000/](http://localhost:3000/)
 
 By defining a board like this, a UI is rendered allowing you to interact with the GPIOs.
 
-```
-var boardConfigNeo = {
+```json
+{
   "name":"UDOO Neo",
   "imageUrl":"./images/neo-top-view.png",
   "headers":[
@@ -87,12 +87,12 @@ var boardConfigPiZero = {
   "imageUrl":"./images/rpi_zero.jpg",
   "headers":[
   {
-      "name":"J8",      // the name of the header  (J6)
-      "xyCoords":[145,26],    // the top xy coords (210,45)
-        "rows":20,        // nr of rows (10)
-        "cols":2,         // nr of columns (2)
-        "spaceX":35.5,      // space between items on same row in px (25)
-        "spaceY":38       // space between items on same column in px ()
+      "name":"J8",      
+      "xyCoords":[145,26],
+        "rows":20,        
+        "cols":2,         
+        "spaceX":35.5,    
+        "spaceY":38       
     },    
     {
       "name":"J5",      
