@@ -1,8 +1,23 @@
-# Introduction
+## Introduction
 
 Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI.
 
 **Work in progress**
+
+## Installing
+
+Install the package 
+```
+sudo npm install https://github.com/ddewaele/web-gpio-react#0.0.0 -g
+```
+
+Start the server
+
+```
+web-gpio-react
+```
+
+Goto http://localhost:3000/
 
 [Live app](http://ddewaele.github.io/web-gpio-react) (Github pages)
 
