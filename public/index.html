@@ -2,9 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>React Tutorial</title>
-    <link rel="stylesheet" type="text/css" href="./css/base.css">
-    <link rel="stylesheet" type="text/css" href="./css/board.css">
+    <title>GPIO Frontend</title>
+    <link rel="stylesheet" type="text/css" href="css/board.css"/>
+    <link rel="stylesheet" href="css/bootstrap-min.css"/>
+    
+    
     <script src="./scripts/react.js"></script>
     <script src="./scripts/react-dom.js"></script>
     <script src="./scripts/browser.js"></script>
@@ -12,7 +14,15 @@
     <script src="./scripts/marked.min.js"></script>
   </head>
   <body>
-    <div id="content"></div>
+    <div class="container-fluid">
+      <div class="row content">
+        <div id="content2"></div>
+      </div>
+  </div>
+    
+    <script src="scripts/data.js"></script>
     <script type="text/babel" src="scripts/main.js"></script>
+    <script src="scripts/bootstrap-min.js"></script>
+   
   </body>
 </html>
