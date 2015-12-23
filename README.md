@@ -88,15 +88,10 @@ var boardConfigPiZero = {
     }             
   ],
   "gpios": [
-    {"location":"J8_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
-    {"location":"J8_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
-    {"location":"J8_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
-    {"location":"J8_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
-    {"location":"J8_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
-    {"location":"J8_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
-    {"location":"J8_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
-    {"location":"J5_1_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
-  ]
+    {"location":"J8_0_0","pin":"13","gpio":"102","description":"5V"},
+    {"location":"J8_1_0","pin":"12","gpio":"100","description":"5V"},
+    {"location":"J8_2_0","pin":"11","gpio":"147","description":"GND"},
+    {"location":"J8_0_1","pin":"8","gpio":"105","description":"3.3V"}]
 
 }
 
