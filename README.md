@@ -37,12 +37,12 @@ By defining a board like this, a UI is rendered allowing you to interact with th
   "imageUrl":"./images/neo-top-view.png",
   "headers":[
   {
-      "name":"J6",      // the name of the header  (J6)
-      "xyCoords":[210,48],    // the top xy coords (210,45)
-        "rows":10,        // nr of rows (10)
-        "cols":2,         // nr of columns (2)
-        "spaceX":25,      // space between items on same row in px (25)
-        "spaceY":24       // space between items on same column in px ()
+      "name":"J6",      
+      "xyCoords":[210,48], 
+        "rows":10,        
+        "cols":2,         
+        "spaceX":25,      
+        "spaceY":24       
     },    
     {
       "name":"J4",      
