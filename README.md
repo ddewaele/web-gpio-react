@@ -70,8 +70,8 @@ Using its name we can retrieve the details of the board.
 
 We currently have 2 boards defined :
 
-- [udoo-neo](/blob/master/public/json/boards/udoo-neo.json)
-- [raspberrypi-zero](/blob/master/public/json/boards/raspberrypi-zero.json)
+- [udoo-neo](./public/json/boards/udoo-neo.json)
+- [raspberrypi-zero](./public/json/boards/raspberrypi-zero.json)
 
 The details of these boards can be retrieved like this:
 
