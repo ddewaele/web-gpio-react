@@ -5,7 +5,11 @@
  | Our main board. 
  | 
  | Top-level object. Displays the board name, image, divs and detail pane.
+ | Needs to have a "board" to work. The "board" can be changed by the BoardSelection component,
+ | triggering a redirect. So the "board" is considered state.
  |
+ | This follows the pattern Load Initial Data via AJAX : https://facebook.github.io/react/tips/initial-ajax.html
+
  */
  var Board = React.createClass({
 
@@ -16,29 +20,38 @@
   	componentDidMount: function() {
     	var component = this;
     	
-    	$.get("./json/boards/udoo-neo.json", function(data) {
-      		//component.setState(data);
-      		console.log("Found board = " + data);
+    	$.get("/boards/" + this.props.boardName, function(board) {
+      		component.setState({"board" : board});
+      		console.log("Found board " + board.name);
     	});
   	}, 	
 
 
  	render: function() {
- 		return (
-			<div className="parent">
-	 			<div className="board">
-		 			<h1>{this.props.boardConfig.name}</h1>
+ 		{{debugger}}
 
-		 			<DetailPane apiPath={this.props.apiPath}/>
+ 		if (this.state.board) {
+	 		return (
+				<div className="parent">
+		 			<div className="board">
 
-		 			<div className="boardcontainer">
-			 			<GpioDivList boardConfig={this.props.boardConfig}/>
-			 			<img src={this.props.boardConfig.imageUrl}/>
-					</div>
+			 			<h1>{this.props.boardConfig.name}</h1>
+
+			 			<DetailPane apiPath={this.props.apiPath}/>
+
+			 			<div className="boardcontainer">
+				 			<GpioDivList boardConfig={this.props.boardConfig}/>
+				 			<img src={this.props.boardConfig.imageUrl}/>
+						</div>
+		 			</div>
+
 	 			</div>
+	 		);
 
- 			</div>
- 		);
+	 	} else {
+
+	 		return (<div>Loading board....</div>);
+	 	}
  	}
  });
 
@@ -50,45 +63,59 @@ var BoardSelection = React.createClass({
              value: "udoo-neo"
          }
      },
-     change: function(event){
-         this.setState({value: event.target.value});
+
+
+     // Keep in mind while doing the async ajax call, the rendering is still going on ....
+     // Also, each call to setState triggers the render function
+     componentDidMount: function() {
+
+		console.log("componentDidMount");
+    	var component = this;
+    	
+    	$.get("/boards", function(boards) {
+    		{{debugger}}
+      		component.setState({
+      			"boards":boards.boards,
+      			"selectedBoard":boards.boards[0].name
+      		});
+      		console.log("state set");
+    	});
+
      },
+
+     change: function(event){
+         this.setState({selectedBoard: event.target.value});
+     },
+
      render: function(){
+     	{{debugger}}
+ 		if (this.state.boards) {
 
-     	var boardOptionsArr = [];
-		for (var property in this.props.boardOptions) {
-		    if (this.props.boardOptions.hasOwnProperty(property)) {
-		        boardOptionsArr.push(
-		        	{"value":property,"label":this.props.boardOptions[property].name}
-		        );
-		    }
-		}
+	    	var boardOptions2 = this.state.boards.map(function(boardOption) {
+	 			return (
+	 				<BoardOption key={boardOption.name} value={boardOption.name} label={boardOption.name} />
+	 			);
+	 		});
 
-     	var boardOptions2 = boardOptionsArr.map(function(boardOption) {
- 			return (
- 				<BoardOption key={boardOption.value} value={boardOption.value} label={boardOption.label} />
- 			);
- 		});
+	        var selection = (
+	           <div>
+	           <div className="input-group">
+	  				<span className="input-group-addon" id="sizing-addon2">Select a board</span>
+	               <select id="lang" className="form-control" onChange={this.change} value={this.state.selectedBoard} aria-describedby="sizing-addon2">
+	                  <option value="select">Select</option>
+				        {boardOptions2}
+	               </select>
+	            </div>
+	                <Board apiPath="/udooneorest" boardName={this.state.selectedBoard} boardConfig={this.props.boardOptions[this.state.selectedBoard]}/>
+	           </div>
+	        );
 
+	        return selection;
 
-   //   	var boardOptions2 = this.props.boardOptions.map(function(boardOption) {
- 		// 	return (
- 		// 		<BoardOption key={boardOption.key} value={boardOption.key} label={boardOption.value.name} />
- 		// 	);
- 		// });
+	    } else {
 
-        return(
-           <div>
-           <div className="input-group">
-  				<span className="input-group-addon" id="sizing-addon2">Select a board</span>
-               <select id="lang" className="form-control" onChange={this.change} value={this.state.value} aria-describedby="sizing-addon2">
-                  <option value="select">Select</option>
-			        {boardOptions2}
-               </select>
-            </div>
-                <Board apiPath="/udooneorest" boardConfig={this.props.boardOptions[this.state.value]}/>
-           </div>
-        );
+	    	return (<div>"Loading boards...."</div>);
+	    }
      }
 
 

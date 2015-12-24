@@ -1,0 +1,6 @@
+{
+	"boards":[
+		{"name":"udoo-neo"},
+		{"name":"raspberrypi-zero"}
+	]
+}

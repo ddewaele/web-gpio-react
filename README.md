@@ -58,167 +58,39 @@ This will start a webserver on port  ```8000```. Point your browser to [http://l
 
 ## Configuration
 
-By defining a board like this, a UI is rendered allowing you to interact with the GPIOs.
+The tool receives the board information via a REST API. This REST API is very simple. At the moment the following calls are supported
 
-```json
-{
-  "name":"UDOO Neo",
-  "imageUrl":"./images/neo-top-view.png",
-  "headers":[
-  {
-      "name":"J6",      
-      "xyCoords":[210,48], 
-        "rows":10,        
-        "cols":2,         
-        "spaceX":25,      
-        "spaceY":24       
-    },    
-    {
-      "name":"J4",      
-      "xyCoords":[485,48],    
-      "rows":8,         
-      "cols":2,         
-      "spaceX":25,    
-      "spaceY":24       
-    },    
-    {
-      "name":"J7",      
-      "xyCoords":[536,567],   
-      "rows":6,         
-      "cols":2,         
-      "spaceX":25,      
-      "spaceY":24       
-    },  
-    {
-      "name":"J5",      
-      "xyCoords":[304,567],   
-      "rows":8,         
-      "cols":2,         
-      "spaceX":25,      
-      "spaceY":24       
-    }             
-  ],
-  "gpios": [
-    {"location":"J6_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
-    {"location":"J6_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
-    {"location":"J6_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
-    {"location":"J6_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
-    {"location":"J4_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
-    {"location":"J4_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
-    {"location":"J4_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
-    {"location":"J5_5_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
-  ]
+```
+curl http://localhost:3000/boards
+```
 
-}
+It return a collection of board objects with one property, its name.
 
-var boardConfigPiZero = {
-  "name":"Raspberry PI Zero",
-  "imageUrl":"./images/rpi_zero.jpg",
-  "headers":[
-  {
-      "name":"J8",      
-      "xyCoords":[145,26],
-        "rows":20,        
-        "cols":2,         
-        "spaceX":35.5,    
-        "spaceY":38       
-    },    
-    {
-      "name":"J5",      
-      "xyCoords":[780,95],   
-      "rows":2,         
-      "cols":2,         
-      "spaceX":38,      
-      "spaceY":38       
-    }             
-  ],
-  "gpios": [
-    {"location":"J8_0_0","pin":"13","gpio":"102","description":"5V"},
-    {"location":"J8_1_0","pin":"12","gpio":"100","description":"5V"},
-    {"location":"J8_2_0","pin":"11","gpio":"147","description":"GND"},
-    {"location":"J8_0_1","pin":"8","gpio":"105","description":"3.3V"}]
+Using its name we can retrieve the details of the board.
 
-}
+We currently have 2 boards defined :
+
+- [udoo-neo](/blob/master/public/json/boards/udoo-neo.json)
+- [raspberrypi-zero](/blob/master/public/json/boards/raspberrypi-zero.json)
+
+The details of these boards can be retrieved like this:
+
+```
+curl http://localhost:3000/boards/udoo-neo
+curl http://localhost:3000/boards/raspberrypi-zero
+```
+
+The are actually stored
+
+curl http://localhost:3000/boards/udoo-neo | python -m json.tool
 
 ```
 
 ## Server side setup
 
+** Need to update this drawing.... **
+
 ![overview](./docs/overview-small.png)
-
-
-
-
-# Project setup
-
-This project was setup by doing executing following steps :
-
-1. Install the ReactJS dependencies via npm
-
-```
-npm install --save react react-dom babelify babel-preset-react
-```
-
-This will install some artifacts in the ```node_modules``` folder.
-
-2. Create some web artifacts in the public folder.
-
-These include
-
-- public/index.html
-- public/css/base.css
-- public/scripts/main.js
-
-Our index.html looks like this :
-
-```
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>React Tutorial</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
-  </head>
-  <body>
-    <div id="content"></div>
-    <script type="text/babel" src="scripts/main.js"></script>
-    <script type="text/babel">
-
-      // To get started with this tutorial running your own code, simply remove
-      // the script tag loading scripts/example.js and start writing code here.
-    </script>
-  </body>
-</html>
-```
-
-3. Creare a simple NodeJS server
-
-```
-var fs = require('fs');
-var path = require('path');
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
-
-app.set('port', (process.env.PORT || 3000));
-
-app.use('/', express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-app.listen(app.get('port'), function() {
-  console.log('Server started: http://localhost:' + app.get('port') + '/');
-});
-```
-
-4. Provide a gitignore file
-
-I also added a [.gitignore file](https://github.com/facebook/react/blob/master/.gitignore) to this repo.
-
 
 
 # UDOO integration
