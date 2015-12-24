@@ -1,10 +1,16 @@
 ## Introduction
 
-Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI.
+Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI. 
 
-**Work in progress**
+The software consists of a frontend (ReactJS) and backend (NodeJS) enabeling you to 
 
-We support various ways of running the sample
+- Define "boards" (any physical devices that exposes pins)
+- Present them on a webpage
+- Interact with the GPIOs
+
+This is very much still a **work in progress** and far from finished. Consider it alpha stage at the moment.
+
+We support various ways of installing / running the software:
 
 - Installing through npm as a node package
 - Running it from the source using npm start
