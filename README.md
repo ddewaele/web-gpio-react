@@ -4,20 +4,49 @@ Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI.
 
 **Work in progress**
 
+We support various ways of running the sample
+
+- Installing through npm as a node package
+- Running it from the source using npm start
+- Running it with your own webserver.
+
+More details can be found below:
+
 ## Installing
 
-Install the package 
+You can install this module using the node package manager (npm) like this:
 ```
 sudo npm install https://github.com/ddewaele/web-gpio-react#0.0.0 -g
 ```
 
-Start the server
+In order to start the server simply execute the following command
 
 ```
 web-gpio-react
 ```
 
 Point your browser to [http://localhost:3000/](http://localhost:3000/)
+
+## Running from the source
+
+You can also clone the repo, enter the folder and run
+
+```
+npm start
+```
+
+If you don't have node installed, you can also start a simply http server using Python.
+
+Enter the ```public``` folder and run the following command
+
+```
+python -m SimpleHTTPServer
+```
+
+This will start a webserver on port  ```8000```. Point your browser to [http://localhost:8000/](http://localhost:8000/)
+
+
+## Live app
 
 [Live app](http://ddewaele.github.io/web-gpio-react) (Github pages)
 
