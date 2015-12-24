@@ -86,11 +86,8 @@ curl http://localhost:3000/boards/udoo-neo
 curl http://localhost:3000/boards/raspberrypi-zero
 ```
 
-The are actually stored
+These are currently stored as json files in the ```publi/json``` folder.
 
-curl http://localhost:3000/boards/udoo-neo | python -m json.tool
-
-```
 
 ## Server side setup
 
@@ -104,8 +101,10 @@ curl http://localhost:3000/boards/udoo-neo | python -m json.tool
 ## haProxy
 
 
+```
 wget http://ports.ubuntu.com/ubuntu-ports/pool/main/h/haproxy/haproxy_1.4.24-2ubuntu0.4_armhf.deb
 sudo dpkg -i haproxy_1.4.24-2ubuntu0.4_armhf.deb 
+```
 
 ## GPIOs
 
