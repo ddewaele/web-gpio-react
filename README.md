@@ -8,6 +8,8 @@ The software consists of a frontend (ReactJS) and backend (NodeJS) enabeling you
 - Present them on a webpage
 - Interact with the GPIOs
 
+![demo](docs/animated_gif/output/output.gif)
+
 This is very much still a **work in progress** and far from finished. Consider it alpha stage at the moment.
 
 We support various ways of installing / running the software:
@@ -56,11 +58,6 @@ This will start a webserver on port  ```8000```. Point your browser to [http://l
 
 [Live app](http://ddewaele.github.io/web-gpio-react) (Github pages)
 
-## Screenshots
-
-![overview](./docs/screenshot1a.png)
-![overview](./docs/screenshot2a.png)
-![overview](./docs/screenshot3a.png)
 
 ## Configuration
 
@@ -105,7 +102,7 @@ These are currently stored as json files in the ```publi/json``` folder.
 wget http://ports.ubuntu.com/ubuntu-ports/pool/main/h/haproxy/haproxy_1.4.24-2ubuntu0.4_armhf.deb
 sudo dpkg -i haproxy_1.4.24-2ubuntu0.4_armhf.deb 
 ```
-
+s
 ## GPIOs
 
 The GPIOs we'll be working with are defined in our javascript like this :

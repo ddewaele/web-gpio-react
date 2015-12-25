@@ -1,4 +1,5 @@
  const MASTERLISTITEM_SELECTION = "masterListItemSelection";
+ const BOARD_SELECTION = "BoardSelection"; 
 
 
 /*
@@ -17,31 +18,44 @@
  		return {board:null};
  	},
 
-  	componentDidMount: function() {
-    	var component = this;
-    	
-    	$.get("/boards/" + this.props.boardName, function(board) {
-      		component.setState({"board" : board});
-      		console.log("Found board " + board.name);
-    	});
-  	}, 	
+ 	componentDidMount: function() {
+ 		console.log(" ++ Board - componentDidMount");
+ 		var component = this;
 
+		CustomEvents.subscribe(BOARD_SELECTION, function(data) {
+			console.log(" ++ Board - BOARD_SELECTION received");
+	    
+	    	$.get("/boards/" + data.board, function(board) {
+	    		{{debugger}}
+	      		component.setState({"board" : board});
+	      		console.log("Found board " + board.name);
+	    	});
+
+
+		});
+
+ 	},
+
+ 	componentWillUnmount: function() {
+		CustomEvents.unsubscribe(BOARD_SELECTION);
+ 	},  	
 
  	render: function() {
  		{{debugger}}
+ 		console.log(" ++ Board - render");
 
  		if (this.state.board) {
 	 		return (
 				<div className="parent">
 		 			<div className="board">
 
-			 			<h1>{this.props.boardConfig.name}</h1>
+			 			<h1>{this.state.board.name}</h1>
 
 			 			<DetailPane apiPath={this.props.apiPath}/>
 
 			 			<div className="boardcontainer">
-				 			<GpioDivList boardConfig={this.props.boardConfig}/>
-				 			<img src={this.props.boardConfig.imageUrl}/>
+				 			<GpioDivList boardConfig={this.state.board}/>
+				 			<img src={this.state.board.imageUrl}/>
 						</div>
 		 			</div>
 
@@ -50,7 +64,15 @@
 
 	 	} else {
 
-	 		return (<div>Loading board....</div>);
+	 		return (
+	 			<div>
+
+	 			Select an IoT board from the dropdown box below. An image will be shown representing the board, 
+	 			hightliging the available gpios that can be manipulated.
+
+                <img src="images/demo.gif"/>
+
+	 			</div>);
 	 	}
  	}
  });
@@ -58,25 +80,23 @@
 
 var BoardSelection = React.createClass({
 
-     getInitialState: function() {
-         return {
-             value: "udoo-neo"
-         }
-     },
 
-
-     // Keep in mind while doing the async ajax call, the rendering is still going on ....
+ 	getInitialState: function() {
+ 		return {};
+ 	},
+     
+     // Keep in mind that this is called after the render function.
+     // Also, when doing the async ajax call, the rendering is still going on ....
      // Also, each call to setState triggers the render function
      componentDidMount: function() {
 
-		console.log("componentDidMount");
+		console.log(" ++ BoardSelection - componentDidMount");
     	var component = this;
     	
     	$.get("/boards", function(boards) {
-    		{{debugger}}
+    		console.log(" ++ BoardSelection - getting new data");
       		component.setState({
       			"boards":boards.boards,
-      			"selectedBoard":boards.boards[0].name
       		});
       		console.log("state set");
     	});
@@ -84,14 +104,19 @@ var BoardSelection = React.createClass({
      },
 
      change: function(event){
+        {{debugger}}
+		console.log(" ++ BoardSelection - change ... sending event");
          this.setState({selectedBoard: event.target.value});
+         if (event.target.value!=="select") {
+            CustomEvents.notify(BOARD_SELECTION, {board:event.target.value});
+        }
      },
 
      render: function(){
-     	{{debugger}}
+     	console.log(" ++ BoardSelection - render");
  		if (this.state.boards) {
 
-	    	var boardOptions2 = this.state.boards.map(function(boardOption) {
+	    	var boardOptions = this.state.boards.map(function(boardOption) {
 	 			return (
 	 				<BoardOption key={boardOption.name} value={boardOption.name} label={boardOption.name} />
 	 			);
@@ -103,10 +128,10 @@ var BoardSelection = React.createClass({
 	  				<span className="input-group-addon" id="sizing-addon2">Select a board</span>
 	               <select id="lang" className="form-control" onChange={this.change} value={this.state.selectedBoard} aria-describedby="sizing-addon2">
 	                  <option value="select">Select</option>
-				        {boardOptions2}
+				        {boardOptions}
 	               </select>
 	            </div>
-	                <Board apiPath="/udooneorest" boardName={this.state.selectedBoard} boardConfig={this.props.boardOptions[this.state.selectedBoard]}/>
+	                <Board apiPath="/udooneorest" boardName={this.state.selectedBoard} />
 	           </div>
 	        );
 
@@ -560,4 +585,4 @@ var CustomEvents = (function() {
   }
 })();
 
-ReactDOM.render(<BoardSelection boardOptions={boardOptions}/>,document.getElementById('content2'));
+ReactDOM.render(<BoardSelection />,document.getElementById('content2'));
