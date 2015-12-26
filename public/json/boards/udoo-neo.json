@@ -1,4 +1,5 @@
 {
+    "id":"udoo-neo",
 	"name":"UDOO Neo",
 	"imageUrl":"./images/neo-top-view.jpg",
 	"headers":[

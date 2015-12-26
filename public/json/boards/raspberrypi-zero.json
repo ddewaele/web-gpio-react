@@ -1,4 +1,5 @@
 {
+	"id":"raspberrypi-zero",
 	"name":"Raspberry PI Zero",
 	"imageUrl":"./images/rpi_zero.jpg",
 	"headers":[
