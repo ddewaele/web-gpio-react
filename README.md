@@ -39,11 +39,15 @@ Point your browser to [http://localhost:3000/](http://localhost:3000/)
 
 ## Installing a a service
 
-If you're installing this on a linux distro (as is probably the case in terms of UDOO Neo / RaspberryPi Zero), you can install the software as a linux service using forever-service. The advantages are 
+If you're installing this on a linux distro (as is probably the case in terms of UDOO Neo / RaspberryPi Zero), you can install the software as a linux service using forever-service. The advantages are :
+
+- It's the standard way of doing things in Linux
+- It start automatically when device is rebooted
+- Auto-restart in case the service crashes.
 
 Here are the very simple steps needed :
 
-Install forever and forever-service
+We will be using ```forever``` and the ```forever-service``` packages. These need to be installed globally.
 
 ```
 sudo npm install -g forever
