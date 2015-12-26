@@ -125,7 +125,7 @@ These are currently stored as json files in the ```publi/json``` folder.
 
 ** Need to update this drawing.... **
 
-![overview](./docs/overview-small.png)
+![overview](./docs/overview.png)
 
 
 # UDOO integration
