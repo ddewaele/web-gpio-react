@@ -15,6 +15,7 @@ This is very much still a **work in progress** and far from finished. Consider i
 We support various ways of installing / running the software:
 
 - Installing through npm as a node package
+- Installing it a a service on a linux distro
 - Running it from the source using npm start
 - Running it with your own webserver.
 
@@ -27,13 +28,47 @@ You can install this module using the node package manager (npm) like this:
 sudo npm install https://github.com/ddewaele/web-gpio-react#0.0.0 -g
 ```
 
-In order to start the server simply execute the following command
+In order to start the server manually simply execute the following command
 
 ```
 web-gpio-react
 ```
 
 Point your browser to [http://localhost:3000/](http://localhost:3000/)
+
+
+## Installing a a service
+
+If you're installing this on a linux distro (as is probably the case in terms of UDOO Neo / RaspberryPi Zero), you can install the software as a linux service using forever-service. The advantages are 
+
+Here are the very simple steps needed :
+
+Install forever and forever-service
+
+```
+sudo npm install -g forever
+sudo npm install -g forever-service
+```
+
+Install the service
+
+```
+sudo forever-service install web-gpio-react --script /usr/local/bin/web-gpio-react 
+
+forever-service version 0.5.4
+
+Platform - Ubuntu 14.04.3 LTS
+runuserpath not found
+web-gpio-react provisioned successfully
+
+Commands to interact with service web-gpio-react
+Start   - "sudo start web-gpio-react"
+Stop    - "sudo stop web-gpio-react"
+Status  - "sudo status web-gpio-react"
+Restart - "sudo restart web-gpio-react"
+```
+
+This will have installed the web-gpio-react service using the following configuration file : ```/etc/init/web-gpio-react.conf```.
 
 ## Running from the source
 
