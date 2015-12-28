@@ -26,7 +26,6 @@
 			console.log(" ++ Board - BOARD_SELECTION received");
 	    
 	    	$.get("/boards/" + data.board, function(board) {
-	    		{{debugger}}
 	      		component.setState({"board" : board});
 	      		console.log("Found board " + board.name);
 	    	});
@@ -41,7 +40,6 @@
  	},  	
 
  	render: function() {
- 		{{debugger}}
  		console.log(" ++ Board - render");
 
  		if (this.state.board) {
@@ -104,7 +102,6 @@ var BoardSelection = React.createClass({
      },
 
      change: function(event){
-        {{debugger}}
 		console.log(" ++ BoardSelection - change ... sending event");
          this.setState({selectedBoard: event.target.value});
          if (event.target.value!=="select") {
@@ -181,8 +178,9 @@ var BoardOption = React.createClass({
  	// Perhaps a weird hook to use, but the detail pane gets updated each time a gpioDiv was clicked.
  	// So at this point we expect to show the dialog.
  	//
- 	// However, when the combo box changes (onChange event), it also triggers a component update. In this case however, the selectedGpio
- 	// will still be the same. So only show the modal when we select a new gpio.
+ 	// However, when the combo box changes (onChange event), it also triggers a component update. 
+ 	// In this case however, the selectedGpio will still be the same. 
+ 	// So only show the modal when we select a new gpio.
  	//
  	componentDidUpdate: function(prevProps,prevState) {
  		
@@ -193,7 +191,6 @@ var BoardOption = React.createClass({
  	},
 
  	componentWillUnmount: function() {
- 		{{debugger}}
 		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
  	},  	
 
@@ -255,6 +252,7 @@ var BoardOption = React.createClass({
 
  		var that = this;
 		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
+			{{debugger}}
 			that.setState({selectedgpioDiv:data.gpioDiv});
 		});
 
@@ -431,12 +429,24 @@ var BoardOption = React.createClass({
  | - set the value of the GPIO 
  | - read the value of the GPIO
  | 
+ | States associated here
+ |
+ | this.state.gpioValue
+ | this.state.gpioExported
+ |
  */
  var Gpio = React.createClass({
 
 
  	getInitialState: function() {
  		return {gpioValue: 0};
+ 	},
+
+
+ 	componentDidMount: function() {
+ 		{{debugger}}
+ 		console.log(" +++ Gpio componentDidMount");
+ 		this.retrieveGpioDirection(); 		
  	},
 
  	executeAjaxCall: function(url,method) {
@@ -447,12 +457,14 @@ var BoardOption = React.createClass({
  			cache: false,
  			success: function(data) {
  				console.log("Result ok " + data);
-		    //this.setState({data: data});
-		},
-		error: function(xhr, status, err) {
-			console.log("Error occured " + status);
-		    //console.error(this.props.url, status, err.toString());
-		}
+ 				this.setState({
+					gpioDirectionError: null
+ 				});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				console.log("Error occured " + status);
+		    	//console.error(this.props.url, status, err.toString());
+			}.bind(this)
 	});
  	},
 
@@ -469,7 +481,29 @@ var BoardOption = React.createClass({
  			}.bind(this),
  			error: function(xhr, status, err) {
  				console.log("Error occured " + status);
-		  }.bind(this) // needed to be able to use the this keyboard in the callbacks.
+		  }.bind(this)
+		});		
+ 	},
+
+ 	retrieveGpioDirection: function() {
+ 		var gpio = this.props.gpio;
+ 		$.ajax({
+ 			url: this.props.apiPath + "/gpio/" + gpio + "/direction",
+ 			dataType: 'json',
+ 			method: 'GET',
+ 			cache: false,
+ 			success: function(data) {
+ 				console.log("Found GPIO  " + gpio + " value = " + data.message);
+ 				this.setState({
+ 						gpioDirection: data.message,
+ 						gpioDirectionError: null
+ 				});
+ 				//setInterval(this.retrieveGpioValue, 1000);
+ 			}.bind(this),
+ 			error: function(xhr, status, err) {
+				console.log("Error occured " + status);
+				this.setState({gpioDirectionError: xhr.responseJSON.message});
+		  }.bind(this)
 		});		
  	},
 
@@ -495,6 +529,9 @@ var BoardOption = React.createClass({
 
  	render: function() {
 
+ 		//TODO: replace this with classNames
+ 		var btnDirectionOutputClass = "btn btn-default" + (("out"===this.state.gpioDirection) ? " disabled" : "");	
+ 		var btnDirectionInputClass = "btn btn-default" + (("in"===this.state.gpioDirection) ? " disabled" : "");
  		return (
 
 			<div className="modal fade" id="gpioDetailModal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -513,7 +550,10 @@ var BoardOption = React.createClass({
 					   <tbody>
 							<tr>
 								<th className="text-nowrap" scope="row">PIN</th>
-								<td>{this.props.pin}</td>
+								<td>
+									{this.props.pin} 
+									{!this.state.gpioDirectionError && " (GPIO Exported)"}
+								</td>
 							</tr>
 							<tr>
 								<th className="text-nowrap" scope="row">Description</th>
@@ -530,20 +570,30 @@ var BoardOption = React.createClass({
 
 							<tr>
 								<th className="text-nowrap" scope="row">Export</th>
-								<td><button type="button" className="btn btn-default" onClick={this.exportGpio}>Export</button></td>
+								<td>
+									
+									<div>{this.state.gpioDirectionError && (
+										<div>{this.state.gpioDirectionError}
+											<p><button type="button" className="btn btn-default" onClick={this.exportGpio}>Export</button></p>
+										</div>
+
+									   )}</div>
+								</td>
 							</tr>
 
 							<tr>
 								<th className="text-nowrap" scope="row">Direction</th>
 								<td>
-									<button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"in")}>Input</button>
-									<button type="button" className="btn btn-default" onClick={this.changeGpioDirection.bind(this,"out")}>Output</button>
+								    <p>{this.state.gpioDirection}</p>
+									<button type="button" className={btnDirectionInputClass} onClick={this.changeGpioDirection.bind(this,"in")}>Input</button>
+									<button type="button" className={btnDirectionOutputClass} onClick={this.changeGpioDirection.bind(this,"out")}>Output</button>
 								</td>
 							</tr>
 
 							<tr>
 								<th className="text-nowrap" scope="row">Value</th>
-								<td>{this.state.gpioValue}</td>
+								<td><p>{this.state.gpioValue}</p>
+								<button type="button" className="btn btn-default" onClick={this.retrieveGpioValue}>Refresh Value</button></td>
 							</tr>      
 					   </tbody>
 					</table>

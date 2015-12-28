@@ -20,7 +20,7 @@
 			"spaceY":24				
 		},		
 		{
-			"name":"J7", 			
+			"name":"J5", 			
 			"xyCoords":[536,567],   
 			"rows":6, 				
 			"cols":2, 				
@@ -28,7 +28,7 @@
 			"spaceY":24				
 		},	
 		{
-			"name":"J5", 			
+			"name":"J7", 			
 			"xyCoords":[304,567],   
 			"rows":8, 				
 			"cols":2, 				
@@ -48,7 +48,6 @@
 		{"location":"J6_8_0","pin":"25","gpio":"22","description":"CSI1_HSYNC"},
 		{"location":"J6_9_0","pin":"24","gpio":"25","description":"CSI1_VSYNC"},
 
-
 		{"location":"J4_0_0","pin":"23","gpio":"124","description":"CSI1_PXCLK"},
 		{"location":"J4_1_0","pin":"22","gpio":"182","description":""},
 		{"location":"J4_2_0","pin":"21","gpio":"173","description":"ECSPI2_MOSI"},
@@ -59,14 +58,31 @@
 		{"location":"J4_7_0","pin":"16","gpio":"106","description":"PWM_3"},
 
 
-		{"location":"J6_4_1","pin":"13","gpio":"102","description":"pin 13 inner bank"},
-		{"location":"J6_5_1","pin":"12","gpio":"100","description":"pin 12 inner bank"},
-		{"location":"J6_6_1","pin":"11","gpio":"147","description":"pin 11 inner bank"},
-		{"location":"J6_9_1","pin":"8","gpio":"105","description":"pin 8 inner bank"},
+		{"location":"J6_0_1","pin":"SCL","gpio":"N/A","description":"I2C SCL (Clock Line)"},
+		{"location":"J6_1_1","pin":"SDA","gpio":"N/A","description":"I2C SDA (Data Line)"},
+		{"location":"J6_2_1","pin":"AREF","gpio":"N/A","description":"AREF 3.3v"},
+		{"location":"J6_3_1","pin":"GND","gpio":"N/A","description":"GND"},
+		{"location":"J6_4_1","pin":"13","gpio":"102","description":""},
+		{"location":"J6_5_1","pin":"12","gpio":"100","description":""},
+		{"location":"J6_6_1","pin":"11","gpio":"147","description":"PWM_7 ECSPI2_MOSI"},
+		{"location":"J6_7_1","pin":"10","gpio":"146","description":"PWM_8 ECSPI2_SSO"},		
+		{"location":"J6_8_1","pin":"9","gpio":"148","description":"PWM_6"},		
+		{"location":"J6_9_1","pin":"8","gpio":"105","description":""},
+
+
+		{"location":"J5_0_0","pin":"A0","gpio":"A0","description":"Analog pin A0"},
+		{"location":"J5_1_0","pin":"A1","gpio":"A1","description":"Analog pin A1"},
+		{"location":"J5_2_0","pin":"A2","gpio":"A2","description":"Analog pin A2"},
+		{"location":"J5_3_0","pin":"A3","gpio":"A3","description":"Analog pin A3"},
+		{"location":"J5_4_0","pin":"A4","gpio":"A4","description":"Analog pin A4"},
+		{"location":"J5_5_0","pin":"A5","gpio":"A5","description":"Analog pin A5"},
+
+
+
 		{"location":"J4_5_1","pin":"2","gpio":"104","description":"pin 2 inner bank"},
 		{"location":"J4_4_1","pin":"3","gpio":"143","description":"pin 3 inner bank"},
 		{"location":"J4_3_1","pin":"4","gpio":"142","description":"pin 4 inner bank"},
-		{"location":"J5_5_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
+		{"location":"J7_5_1","pin":"42","gpio":"127","description":"pin 42 outer bank"}
 	]
 
 }
