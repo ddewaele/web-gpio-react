@@ -151,12 +151,15 @@ haProxy will ensure that
 
 ## haProxy
 
+haProxy can be installed using the following commands.
 
 ```
 wget http://ports.ubuntu.com/ubuntu-ports/pool/main/h/haproxy/haproxy_1.4.24-2ubuntu0.4_armhf.deb
 sudo dpkg -i haproxy_1.4.24-2ubuntu0.4_armhf.deb 
 ```
-s
+
+Then simply drop the configuration file in ```/etc/haproxy/haproxy.cfg```
+
 ## GPIOs
 
 The GPIOs we'll be working with are defined in our javascript like this :
