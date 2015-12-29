@@ -10,3 +10,7 @@
    cursor: pointer; 
    cursor: hand;
 }
+
+.error {
+  color: red;
+}
