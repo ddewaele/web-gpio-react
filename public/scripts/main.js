@@ -582,11 +582,29 @@ var BoardOption = React.createClass({
 				});
 		  	}.bind(this)
  		);
-
-
- 		
  		
  	},
+
+ 	unExportGpio: function() {
+
+ 		var url = this.props.apiPath + "/gpio/" + this.props.gpio + "/unexport";
+ 		this.executeAjaxCall(
+ 			url,
+ 			'POST', 
+ 			function success() {
+ 				this.retrieveGpioDirection();
+ 				this.setState({
+ 						gpioExportError: null
+ 				}); 				
+ 			}.bind(this),
+			function error(xhr, status, err) {
+				this.setState({
+						gpioExportError: xhr.responseJSON.message
+				});
+		  	}.bind(this)
+ 		);
+ 		
+ 	}, 	
 
  	render: function() {
 
@@ -634,12 +652,12 @@ var BoardOption = React.createClass({
 								<th className="text-nowrap" scope="row">Export</th>
 								<td>
 									
-									<div>{this.state.gpioDirectionError && (
 										<div className="error">{this.state.gpioDirectionError}
-											<p><button type="button" className="btn btn-default" onClick={this.exportGpio}>Export</button></p>
+											<p>
+												<button type="button" className="btn btn-default" onClick={this.exportGpio}>Export</button>
+												<button type="button" className="btn btn-default" onClick={this.unExportGpio}>un-Export</button>												
+											</p>
 										</div>
-
-									   )}</div>
 
 									<div className="error">{this.state.gpioExportError}</div>
 								</td>
