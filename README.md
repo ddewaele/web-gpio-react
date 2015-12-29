@@ -25,7 +25,7 @@ More details can be found below:
 
 You can install this module using the node package manager (npm) like this:
 ```
-sudo npm install https://github.com/ddewaele/web-gpio-react#0.0.0 -g
+sudo npm install https://github.com/ddewaele/web-gpio-react#0.0.1 -g
 ```
 
 In order to start the server manually simply execute the following command
@@ -35,6 +35,8 @@ web-gpio-react
 ```
 
 Point your browser to [http://localhost:3000/](http://localhost:3000/)
+
+In order to interact with your board, you'll need to setup haProxy. (see later section)
 
 
 ## Installing a a service
@@ -122,15 +124,28 @@ curl http://localhost:3000/boards/udoo-neo
 curl http://localhost:3000/boards/raspberrypi-zero
 ```
 
-These are currently stored as json files in the ```publi/json``` folder.
+These are currently stored as json files in the ```public/json``` folder.
 
 
 ## Server side setup
 
-** Need to update this drawing.... **
+The basic idea is to make your IoT device available through some kind of VPN solution.
+When the IoT device has started the ```web-gpio-react``` software, you'll be able to interface with its hardware from anywhere in the world.
 
 ![overview](./docs/overview.png)
 
+
+### haProxy
+
+In order to interact with the board itself, we can plugin different implementations.
+We currently support the [udooneorest](https://github.com/marksull/udooneorest) library that can be installed as a ruby gem.
+By default, the udooneorest library will run at [http://localhost:4567](http://localhost:4567).
+
+Using the [provided haProxy config file](./docs/haproxy.cfg), we can expose the solution on [http://localhost:8080](http://localhost:8080).
+haProxy will ensure that 
+
+- web-gpio-react calls are redirected to [http://localhost:3000](http://localhost:3000).
+- udooneorest calls are redirected to [http://localhost:4567](http://localhost:4567).
 
 # UDOO integration
 
@@ -221,11 +236,19 @@ cat /sys/class/gpio/gpio147/value
 
 Exporting a GPIO, setting the direction and setting a value.
 ```
-curl -v -H 'Content-Length: 0' -X PUT http://localhost:8085/udooneorest/gpio/102/export
-curl -v -H 'Content-Length: 0' -X POST http://localhost:8085/udooneorest/gpio/102/direction/out
-curl -v -H 'Content-Length: 0' -X PUT http://localhost:8085/udooneorest/gpio/102/value/1
-curl -v -H 'Content-Length: 0' -X PUT http://localhost:8085/udooneorest/gpio/102/value/0
-```                                   
+curl -v -H 'Content-Length: 0' -X PUT http://localhost:4567/gpio/102/export
+curl -v -H 'Content-Length: 0' -X POST http://localhost:4567/gpio/102/direction/out
+curl -v -H 'Content-Length: 0' -X PUT http://localhost:4567/gpio/102/value/1
+curl -v -H 'Content-Length: 0' -X PUT http://localhost:4567/gpio/102/value/0
+```                  
+
+Read operations
+
+```
+curl -v http://localhost:4567/gpio/102/direction
+curl -v http://localhost:4567/gpio/102/value
+```                  
+
 
 Performing an invalid call
 ```
