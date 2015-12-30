@@ -1,7 +1,9 @@
-var app = app || {};
+var app = window.app || {};  // for some reason this doens't work with var app = app || {}. Needs to be on window for jspx files.
 
 (function () {
 	'use strict';
+
+	console.log("Main  found restApi " + app.restApi);
 
  const MASTERLISTITEM_SELECTION = "masterListItemSelection";
  const BOARD_SELECTION = "BoardSelection"; 
@@ -54,7 +56,7 @@ var app = app || {};
 
 			 			<h1>{this.state.board.name}</h1>
 
-			 			<DetailPane apiPath={this.props.apiPath}/>
+			 			<DetailPane/>
 
 			 			<div className="boardcontainer">
 				 			<GpioDivList boardConfig={this.state.board}/>
@@ -133,7 +135,7 @@ var BoardSelection = React.createClass({
 				        {boardOptions}
 	               </select>
 	            </div>
-	                <Board apiPath="/udooneorest" boardName={this.state.selectedBoard} />
+	                <Board boardName={this.state.selectedBoard} />
 	           </div>
 	        );
 
@@ -203,7 +205,7 @@ var BoardOption = React.createClass({
  		return (
  			<div>
 				{this.state.selectedGpio && 
-					<Gpio key={this.state.selectedGpio.pin} pin={this.state.selectedGpio.pin} gpio={this.state.selectedGpio.gpio} description={this.state.selectedGpio.description} apiPath={this.props.apiPath}/>
+					<Gpio key={this.state.selectedGpio.pin} pin={this.state.selectedGpio.pin} gpio={this.state.selectedGpio.gpio} description={this.state.selectedGpio.description} />
 				}
  			</div>
 
@@ -222,11 +224,10 @@ var BoardOption = React.createClass({
  var GpioList = React.createClass({
 
  	render: function() {
-
- 		var apiPath = this.props.apiPath;
+ 		
  		var gpioNodes = this.props.boardConfig.gpios.map(function(gpio) {
  			return (
- 				<Gpio key={gpio.pin} pin={gpio.pin} gpio={gpio.gpio} description={gpio.description} apiPath={apiPath}/>
+ 				<Gpio key={gpio.pin} pin={gpio.pin} gpio={gpio.gpio} description={gpio.description} />
  			);
  		});
 
@@ -453,60 +454,22 @@ var BoardOption = React.createClass({
  		this.retrieveGpioDirection(); 		
  	},
 
- 	executeAjaxCall: function(url,method,successCallback,errorCallback) {
- 		console.log(" ++ AJAX : executing HTTP " + method + " with url " + url);
- 		$.ajax({
- 			url: url,
- 			dataType: 'json',
- 			method: method,
- 			cache: false,
-
- 			success: function(data) {
- 				console.log(" ++ AJAX : call ok with response " + JSON.stringify(data));
- 				typeof successCallback === 'function' && successCallback(data);
-			}.bind(this),
-
-			error: function(xhr, status, err) {
-				console.log(" ++ AJAX : error occured " + JSON.stringify(xhr));
-				typeof errorCallback === 'function' && errorCallback(xhr, status, err);
-			}.bind(this)
-		});
- 	},
-
  	retrieveGpioValue: function() {
- 		var gpio = this.props.gpio;
-		var url = this.props.apiPath + "/gpio/" + gpio + "/value"
- 		
- 		this.executeAjaxCall(
- 			url,
- 			'GET',
+ 		app.restApi.retrieveGpioValue(
+ 			this.props.gpio,
  			function success(data) {
-				console.log("Found GPIO  " + gpio + " value = " + data.message);
- 				this.setState({
- 						gpioValue: data.message,
- 						gpioGetValueError: null
- 				});
+ 				this.setState({gpioValue: data.message,gpioGetValueError: null});
  			}.bind(this),
  			function error(xhr, status, err) {
-				this.setState({
-						gpioGetValueError: xhr.responseJSON.message
-				});				
+				this.setState({gpioGetValueError: (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText)});				
  			}.bind(this)
  		);
-
  	},
 
  	retrieveGpioDirection: function() {
-
-		var gpio = this.props.gpio;
-		var url = this.props.apiPath + "/gpio/" + gpio + "/direction"
- 		
-
- 		this.executeAjaxCall(
- 			url,
- 			'GET',
+ 		app.restApi.retrieveGpioDirection(
+ 			this.props.gpio,
  			function success(data) {
- 				console.log("Found GPIO  " + gpio + " value = " + data.message);
  				this.setState({
  						gpioDirection: data.message,
  						gpioDirectionError: null,
@@ -516,91 +479,62 @@ var BoardOption = React.createClass({
  				//setInterval(this.retrieveGpioValue, 1000);
  			}.bind(this),
  			function error(xhr, status, err) {
-				this.setState({
-						gpioDirectionError: xhr.responseJSON.message
-				});
+				this.setState({gpioDirectionError: (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText)});
 		  	}.bind(this)
  		);
 		
  	},
 
  	toggleGpio: function(val) {
- 		var gpio = this.props.gpio;
- 		var url = this.props.apiPath + "/gpio/" + gpio + "/value/" + (val ? "1"  : "0");
-		
-		this.executeAjaxCall(
- 			url,
- 			'PUT',
+		app.restApi.toggleGpio(
+ 			this.props.gpio,
+ 			val,
  			function success(data) {
- 				this.setState({
- 						gpioSetValueError: null
- 				});
- 				//setInterval(this.retrieveGpioValue, 1000);
+ 				this.setState({gpioSetValueError: null});
  			}.bind(this),
  			function error(xhr, status, err) {
-				this.setState({
-						gpioSetValueError: xhr.responseJSON.message
-				});
+				this.setState({gpioSetValueError: (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText)});
 		  	}.bind(this)
  		);
  	},	
 
  	changeGpioDirection: function(direction) {
- 		var url = this.props.apiPath + "/gpio/" + this.props.gpio + "/direction/" + direction;
- 		this.executeAjaxCall(
- 			url,
- 			'PUT', 
+ 		app.restApi.changeGpioDirection(
+ 			this.props.gpio,
+ 			direction, 
  			function success() {
  				this.retrieveGpioDirection();
- 				this.setState({
- 						gpioSetDirectionError: null
- 				}); 				
+ 				this.setState({gpioSetDirectionError: null}); 				
  			}.bind(this),
 			function error(xhr, status, err) {
-				this.setState({
-						gpioSetDirectionError: xhr.responseJSON.message
-				});
+				this.setState({gpioSetDirectionError: (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText)});
 		  	}.bind(this)
  		);
  	},	 
 
  	exportGpio: function() {
-
- 		var url = this.props.apiPath + "/gpio/" + this.props.gpio + "/export";
- 		this.executeAjaxCall(
- 			url,
- 			'POST', 
+ 		app.restApi.exportGpio(
+ 			this.props.gpio,
  			function success() {
  				this.retrieveGpioDirection();
- 				this.setState({
- 						gpioExportError: null
- 				}); 				
+ 				this.setState({gpioExportError: null}); 				
  			}.bind(this),
 			function error(xhr, status, err) {
-				this.setState({
-						gpioExportError: xhr.responseJSON.message
-				});
+				this.setState({gpioExportError: (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText)});
 		  	}.bind(this)
  		);
  		
  	},
 
  	unExportGpio: function() {
-
- 		var url = this.props.apiPath + "/gpio/" + this.props.gpio + "/unexport";
- 		this.executeAjaxCall(
- 			url,
- 			'POST', 
+ 		app.restApi.unExportGpio(
+ 			this.props.gpio,
  			function success() {
  				this.retrieveGpioDirection();
- 				this.setState({
- 						gpioExportError: null
- 				}); 				
+ 				this.setState({gpioExportError: null}); 				
  			}.bind(this),
 			function error(xhr, status, err) {
-				this.setState({
-						gpioExportError: xhr.responseJSON.message
-				});
+				this.setState({gpioExportError: (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText)});
 		  	}.bind(this)
  		);
  		
@@ -722,6 +656,7 @@ var CustomEvents = (function() {
   }
 })();
 
+	console.log("in main with app " + app.restApi);
 	function render() {
 		ReactDOM.render(<BoardSelection />,document.getElementById('content'));
 	}
