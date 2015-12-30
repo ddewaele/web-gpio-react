@@ -29,21 +29,21 @@ var app = window.app || {};  // for some reason this doens't work with var app =
  		console.log(" ++ Board - componentDidMount");
  		var component = this;
 
-		CustomEvents.subscribe(BOARD_SELECTION, function(data) {
-			console.log(" ++ Board - BOARD_SELECTION received");
+		CustomEvents.subscribe("Board",BOARD_SELECTION, function(data) {
+			console.log(" ++ Board - RECEIVED BOARD_SELECTION EVENT " + data);
 	    
 	    	$.get("/boards/" + data.board, function(board) {
 	      		component.setState({"board" : board});
 	      		console.log("Found board " + board.name);
 	    	});
 
-
 		});
 
  	},
 
  	componentWillUnmount: function() {
-		CustomEvents.unsubscribe(BOARD_SELECTION);
+ 		console.log(" ++ Board - componentWillUnmount");
+		CustomEvents.unsubscribe("Board",BOARD_SELECTION);
  	},  	
 
  	render: function() {
@@ -175,12 +175,20 @@ var BoardOption = React.createClass({
  	// The payload contains the following: 
  	// data.gpioDiv : Object {location: "J6_6_1", pin: "11", gpio: "147", description: "pin 11 inner bank"}
  	componentDidMount: function() {
+ 		console.log(" ++ DetailPane - componentDidMount");
  		var that = this;
-		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
+		CustomEvents.subscribe("DetailPane",MASTERLISTITEM_SELECTION, function(data) {
+			console.log(" ++ DetailPane - RECEIVED MASTERLISTITEM_SELECTION EVENT " + data);
 			that.setState({selectedGpio:data.gpioDiv});
 		});
+
  	},
 
+ 	componentWillUpdate: function() {
+ 		console.log(" ++ DetailPane - componentWillUpdate");
+ 	},
+
+ 	//
  	//
  	// Perhaps a weird hook to use, but the detail pane gets updated each time a gpioDiv was clicked.
  	// So at this point we expect to show the dialog.
@@ -190,7 +198,7 @@ var BoardOption = React.createClass({
  	// So only show the modal when we select a new gpio.
  	//
  	componentDidUpdate: function(prevProps,prevState) {
- 		
+ 		console.log(" ++ DetailPane - componentDidUpdate");
  		if (this.state.selectedGpio!=prevState.selectedGpio) {
 	 		console.log("Showing gpioDetailModal " + $('#gpioDetailModal'));
 	 		$('#gpioDetailModal').modal('show');
@@ -198,10 +206,12 @@ var BoardOption = React.createClass({
  	},
 
  	componentWillUnmount: function() {
-		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
+ 		console.log(" ++ DetailPane - componentWillUnmount");
+		CustomEvents.unsubscribe("DetailPane",MASTERLISTITEM_SELECTION);
  	},  	
 
  	render: function() {
+ 		console.log(" ++ DetailPane - render");
  		return (
  			<div>
 				{this.state.selectedGpio && 
@@ -212,33 +222,6 @@ var BoardOption = React.createClass({
  		);
  	}
 
- });
-
-/*
- | A list of GPIOs. 
- | Used in the board component. 
- | (currently renders the GPIOs inside a table)=
- |
- | Uses the map function of the JS array to return individual ReactJS components.
- */
- var GpioList = React.createClass({
-
- 	render: function() {
- 		
- 		var gpioNodes = this.props.boardConfig.gpios.map(function(gpio) {
- 			return (
- 				<Gpio key={gpio.pin} pin={gpio.pin} gpio={gpio.gpio} description={gpio.description} />
- 			);
- 		});
-
- 		return (
- 			<table>
- 			<tbody>
- 			{gpioNodes}
- 			</tbody>
- 			</table>
- 		);
- 	}
  });
 
 
@@ -255,16 +238,18 @@ var BoardOption = React.createClass({
  	},
 
  	componentDidMount: function() {
-
+		console.log(" ++ GpioDivList - componentDidMount");
  		var that = this;
-		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
+		CustomEvents.subscribe("GpioDivList",MASTERLISTITEM_SELECTION, function(data) {
+			console.log(" ++ GpioDivList - RECEIVED MASTERLISTITEM_SELECTION EVENT " + data);
 			that.setState({selectedgpioDiv:data.gpioDiv});
 		});
 
  	},
 
  	componentWillUnmount: function() {
-		CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION);
+ 		console.log(" ++ GpioDivList - componentWillUnmount");
+		CustomEvents.unsubscribe("GpioDivList",MASTERLISTITEM_SELECTION);
  	},  	
 
  	// Here we are constructing gpioDiv objects. 
@@ -369,14 +354,15 @@ var BoardOption = React.createClass({
 	// this.props.gpioDiv : Object {pin: "J6_0_0", x: 210, y: 48, gpio: undefined}
 	// data.gpioDiv : Object {location: "J6_4_1", pin: "13", gpio: "102", description: "pin 13 inner bank"}
  	componentDidMount: function() {
-
+		console.log(" ++ GpioDiv - componentDidMount");
  		var that = this;
  		
- 		CustomEvents.subscribe(MASTERLISTITEM_SELECTION, function(data) {
- 			console.log("gpioDiv setting state " + data.gpioDiv.pin);
- 			if (that.isMounted()) {
+ 		CustomEvents.subscribe("GpioDiv",MASTERLISTITEM_SELECTION, function(data) {
+ 			console.log(" ++ GpioDiv - RECEIVED MASTERLISTITEM_SELECTION EVENT " + data);
+ 			console.log("gpioDiv setting state " + (data.gpioDiv ? data.gpioDiv.pin : ""));
+ 			//if (that.isMounted()) {
 				that.setState({selectedGpioDiv:data.gpioDiv});
-			}
+			//}
 		});
 
  	},
@@ -385,36 +371,46 @@ var BoardOption = React.createClass({
 		//BUG: shows no reactJS errors in console when uncommented but fails to show detail pane
 		//BUG : Warning: setState(...): Can only update a mounted or mounting component. This usually means you called setState() on an unmounted component. This is a no-op. Please check the code for the GpioDiv component.
  	componentWillUnmount: function() {
-		//CustomEvents.unsubscribe(MASTERLISTITEM_SELECTION); 
+ 		console.log(" ++ GpioDiv - componentWillUnmount");
+		CustomEvents.unsubscribe("GpioDiv",MASTERLISTITEM_SELECTION); 
  	}, 
+
+
+ 	componentDidUpdate: function(prevProps,prevState) {
+ 		if (this.isSelected()) {
+ 			$('#gpioDetailModal').modal('show');
+ 		}
+		console.log(" ++ GpioDiv - componentDidUpdate : " + this.isSelected());
+ 	},
 
 	isSelected: function() {
 		if (!this.state.selectedGpioDiv) return false;
 		return this.props.gpioDiv.pin === this.state.selectedGpioDiv.location;
 	},
 
-	render: function() {
-
+	getBackgroundColor: function() {
 		var backgroundColor;
 
-		//console.log("Rendering " + this.props.gpioDiv.pin + " - " + ((this.state.selectedgpioDiv) ? this.state.selectedgpioDiv.pin : ""));
 		if (!this.props.gpioDiv.gpio) {
-			backgroundColor = "grey";
+			return "grey";
 		} else {
 			if (this.isSelected()) {
-				backgroundColor = "red";	
+				return "red";	
 			} else {
-				backgroundColor = "green";
+				return "green";
 			} 
 		}
 
+	},
+
+	render: function() {
 
 		var divStyle = {
 			width: "15px",
 			height: "15px",
 			left: this.props.gpioDiv.x + "px",
 			top: this.props.gpioDiv.y + "px",
-			 backgroundColor: backgroundColor
+			backgroundColor: this.getBackgroundColor()
 		};
 
 		return (
@@ -427,17 +423,25 @@ var BoardOption = React.createClass({
 /*
  | <Gpio> component representing a single GPIO.
  |
- | Renders a detail pane allowing us to perform the following actions on the GPIO
+ | It renders a detail pane allowing us to perform the following actions on the GPIO
  |
- | - export the GPIO
- | - set the direction of the GPIO
+ | - export/unexport the GPIO
+ | - set the direction (in/out) of the GPIO
  | - set the value of the GPIO 
  | - read the value of the GPIO
  | 
  | States associated here
  |
  | this.state.gpioValue
+ | this.state.gpioGetValueError
+ | this.state.gpioSetValueError
+ |
+ | this.state.gpioDirection
+ | this.state.gpioDirectionError
+ | this.state.gpioSetDirectionError
+ |
  | this.state.gpioExported
+ | this.state.gpioExportError
  |
  */
  var Gpio = React.createClass({
@@ -450,9 +454,20 @@ var BoardOption = React.createClass({
  	// First thing we try to do is determine the direction.
  	// If this call success
  	componentDidMount: function() {
- 		console.log(" +++ Gpio componentDidMount");
+ 		console.log(" +++ Gpio - componentDidMount");
+
+		$('#gpioDetailModal').on('hidden.bs.modal', function () {
+			console.log("closing modal");
+			CustomEvents.notify(MASTERLISTITEM_SELECTION, {gpioDiv:null});
+		})
+
  		this.retrieveGpioDirection(); 		
  	},
+
+ 	componentWillUnmount: function() {
+ 		console.log(" ++ Gpio - componentWillUnmount");
+		
+ 	},  	
 
  	retrieveGpioValue: function() {
  		app.restApi.retrieveGpioValue(
@@ -628,35 +643,38 @@ var BoardOption = React.createClass({
 			</div>
  			);
  	}
- });
+});
 
 var CustomEvents = (function() {
   var _map = {};
 
   return {
-    subscribe: function(name, cb) {
+    subscribe: function(clientId,name, cb) {
       _map[name] || (_map[name] = []);
-      _map[name].push(cb);
+      _map[name].push({clientId:clientId,cb:cb});
     },
 
-    unsubscribe: function(name) {
-    	delete _map[name];
+    unsubscribe: function(clientId,name) {
+		for (var i = _map[name].length-1; i >= 0; i--) {
+		    if (_map[name][i].clientId === clientId) {
+		        _map[name].splice(i, 1);
+		    }
+		}
     },
 
     notify: function(name, data) {
-      if (!_map[name]) {
-        return;
-      }
+		if (!_map[name]) {
+			return;
+		}
 
-      // if you want canceling or anything else, add it in to this cb loop
-      _map[name].forEach(function(cb) {
-        cb(data);
-      });
+		// if you want canceling or anything else, add it in to this cb loop
+		_map[name].forEach(function(cb) {
+			cb.cb(data);
+		});
     }
   }
 })();
 
-	console.log("in main with app " + app.restApi);
 	function render() {
 		ReactDOM.render(<BoardSelection />,document.getElementById('content'));
 	}
