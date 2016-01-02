@@ -197,12 +197,14 @@ var BoardOption = React.createClass({
  	// In this case however, the selectedGpio will still be the same. 
  	// So only show the modal when we select a new gpio.
  	//
+ 	// IMPROVEMENT : removed the call to show the modal. not needed here.
+ 	//
  	componentDidUpdate: function(prevProps,prevState) {
  		console.log(" ++ DetailPane - componentDidUpdate");
- 		if (this.state.selectedGpio!=prevState.selectedGpio) {
-	 		console.log("Showing gpioDetailModal " + $('#gpioDetailModal'));
-	 		$('#gpioDetailModal').modal('show');
-	 	}
+ 		// if (this.state.selectedGpio!=prevState.selectedGpio) {
+	 	// 	console.log("Showing gpioDetailModal " + $('#gpioDetailModal'));
+	 	// 	//$('#gpioDetailModal').modal('show');
+	 	// }
  	},
 
  	componentWillUnmount: function() {
@@ -376,10 +378,8 @@ var BoardOption = React.createClass({
  	}, 
 
 
+ 	// IMPROVEMENT : before we opened up the modal here. now we open it in Gpio:componentDidMount
  	componentDidUpdate: function(prevProps,prevState) {
- 		if (this.isSelected()) {
- 			$('#gpioDetailModal').modal('show');
- 		}
 		console.log(" ++ GpioDiv - componentDidUpdate : " + this.isSelected());
  	},
 
@@ -390,13 +390,28 @@ var BoardOption = React.createClass({
 
 	getBackgroundColor: function() {
 		var backgroundColor;
-
+		console.log("Getting background for " + JSON.stringify(this.props.gpioDiv.gpio));
 		if (!this.props.gpioDiv.gpio) {
 			return "grey";
 		} else {
 			if (this.isSelected()) {
 				return "red";	
 			} else {
+				if (this.props.gpioDiv.gpio.type==="power") {
+					return "#ffd9b3";
+				} else if (this.props.gpioDiv.gpio.type==="gnd") {
+					return "#000000";
+				} else if (this.props.gpioDiv.gpio.type==="serial") {
+					return "#d9b3ff"
+				} else if (this.props.gpioDiv.gpio.type==="spi") {
+					return "#99ddff"
+				} else if (this.props.gpioDiv.gpio.type==="i2c") {
+					return "#ffffe5"
+				} else if (this.props.gpioDiv.gpio.type=="gpio") {
+					return "#b3ffb3";
+				}
+
+				// Default
 				return "green";
 			} 
 		}
@@ -455,6 +470,8 @@ var BoardOption = React.createClass({
  	// If this call success
  	componentDidMount: function() {
  		console.log(" +++ Gpio - componentDidMount");
+
+		$('#gpioDetailModal').modal('show');
 
 		$('#gpioDetailModal').on('hidden.bs.modal', function () {
 			console.log("closing modal");
