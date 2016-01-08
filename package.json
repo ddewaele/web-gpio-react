@@ -7,18 +7,52 @@
   },
   "main": "./lib/server",
   "scripts": {
-    "start": "web-gpio-react",
+    "start": "node server.js",
+    "test": "NODE_ENV=test mocha --recursive --compilers js:babel-core/register --require ./test/setup.js",
+    "test:watch": "npm test -- --watch",
     "stop": "pkill --signal SIGINT web-gpio-react"
   },
-  "dependencies" : {
+  "dependencies": {
+    "async": "^1.5.2",
     "body-parser": "^1.4.3",
-    "express": "^4.4.5"
+    "classnames": "^2.2.3",
+    "express": "^4.4.5",
+    "jquery": "^2.1.4",
+    "react": "^0.14.0",
+    "react-bootstrap": "^0.28.2",
+    "react-dnd": "^2.0.2",
+    "react-dom": "^0.14.0",
+    "react-redux": "^4.0.0",
+    "redux": "^3.0.0",
+    "redux-thunk": "^0.1.0",
+    "tapable": "^0.2.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-core": "^5.6.18",
+    "babel-loader": "^5.1.4",
+    "babel-plugin-react-transform": "^1.1.0",
+    "expect": "^1.6.0",
+    "express": "^4.13.3",
+    "jsdom": "^5.6.1",
+    "mocha": "^2.2.5",
+    "raw-loader": "^0.5.1",
+    "node-libs-browser": "^0.5.2",
+    "react-addons-test-utils": "^0.14.0",
+    "react-transform-hmr": "^1.0.0",
+    "style-loader": "^0.12.3",
+    "css-loader": "^0.23.0",
+    "eslint-loader": "^1.1.1",
+    "file-loader": "^0.8.5",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.9.11",
+    "webpack-dev-middleware": "^1.2.0",
+    "webpack-hot-middleware": "^2.2.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ddewaele/web-gpio-react.git"
   },
+  "license": "MIT",
   "keywords": [
     "react",
     "tutorial",

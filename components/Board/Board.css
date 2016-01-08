@@ -1,0 +1,6 @@
+.boardcontainer {
+   border: 1px solid #DDDDDD;
+   width: 200px;
+   height: 200px;
+   position: relative;
+}
