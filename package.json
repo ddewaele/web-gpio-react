@@ -1,6 +1,6 @@
 {
   "name": "web-gpio-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Web based GPIO manipulation for IoT proto boards.",
   "bin": {
     "web-gpio-react": "./bin/web-gpio-react"
@@ -10,7 +10,7 @@
     "start": "web-gpio-react",
     "stop": "pkill --signal SIGINT web-gpio-react"
   },
-  "dependencies" : {
+  "dependencies": {
     "body-parser": "^1.4.3",
     "express": "^4.4.5"
   },
