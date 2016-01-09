@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ddewaele/web-gpio-react.svg?branch=master)](https://travis-ci.org/ddewaele/web-gpio-react)
+
 ## Introduction
 
 Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI. 
