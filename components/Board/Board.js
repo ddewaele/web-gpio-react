@@ -3,12 +3,14 @@
 import React, { Component, PropTypes } from 'react';
 //import s from './Board.scss';
 
-import s from './Board.css';
+//import s from './Board.css';
 //import withStyles from '../../decorators/withStyles';
 import CustomEvents from '../CustomEvents/CustomEvents';
 import DetailPane from '../DetailPane/DetailPane';
 import GpioDivList from '../GpioDivList/GpioDivList';
 import $ from 'jquery';
+
+import './Board.css';
 
 /*
  | Our main board. 
@@ -76,11 +78,11 @@ class Board extends Component {
 	 		return (
 
 	 			<div>
-	 			Found {s.toString()}
+	 			
 	 			Select an IoT board from the dropdown box below. An image will be shown representing the board, 
 	 			hightliging the available gpios that can be manipulated.
 
-                <img src="images/demo.gif"/>
+                <img src={require('./images/demo.gif')}/>
 
 	 			</div>);
 	 	}

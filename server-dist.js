@@ -2,11 +2,6 @@ var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
 
-var webpack = require('webpack')
-var webpackDevMiddleware = require('webpack-dev-middleware')
-var webpackHotMiddleware = require('webpack-hot-middleware')
-var config = require('./webpack.config')
-
 var app = new (require('express'))()
 var port = 3000
 
@@ -25,17 +20,12 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
-var compiler = webpack(config)
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
-app.use(webpackHotMiddleware(compiler))
-
 app.use(allowCrossDomain);
 
-
-//app.use('/', require('express').static(PUBLIC_PATH));
+app.use('/', require('express').static(DIST_PATH));
 
 app.get("/", function(req, res) {
-  res.sendFile(__dirname + '/index.html') // used for dev. load the index.html from the root folder.
+  res.sendFile(DIST_PATH + '/index.html') // used for dev. load the index.html from the root folder.
 })
 
 app.get('/boards', function(req, res) {

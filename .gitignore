@@ -6,6 +6,7 @@ static
 .grunt
 _SpecRunner.html
 __benchmarks__
+dist/
 build/
 .module-cache
 *.gem

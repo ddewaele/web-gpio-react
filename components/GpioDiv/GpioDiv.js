@@ -2,9 +2,11 @@
 
 import React, { Component, PropTypes } from 'react';
 //import s from './GpioDiv.scss';
-import s from './GpioDiv.css';
+//import s from './GpioDiv.css';
 //import withStyles from '../../decorators/withStyles';
 import CustomEvents from '../CustomEvents/CustomEvents';
+
+import './GpioDiv.css';
 /*
  | Represents the object responsible for rendering a single GPIO div overlay on top of the image board.
  |
@@ -88,8 +90,6 @@ class GpioDiv extends Component {
 	}
 
 	render() {
-
-		console.log("Found classNAme = " + s.gpioTag);
 
 		var divStyle = {
 			width: "15px",
