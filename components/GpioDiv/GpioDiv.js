@@ -83,6 +83,21 @@ class GpioDiv extends Component {
 			if (this.isSelected()) {
 				return "red";	
 			} else {
+				if (this.props.gpioDiv.gpio.type==="power") {
+					return "#ffd9b3";
+				} else if (this.props.gpioDiv.gpio.type==="gnd") {
+					return "#000000";
+				} else if (this.props.gpioDiv.gpio.type==="serial") {
+					return "#d9b3ff"
+				} else if (this.props.gpioDiv.gpio.type==="spi") {
+					return "#99ddff"
+				} else if (this.props.gpioDiv.gpio.type==="i2c") {
+					return "#ffffe5"
+				} else if (this.props.gpioDiv.gpio.type=="gpio") {
+					return "#b3ffb3";
+				}
+
+				// Default
 				return "green";
 			} 
 		}
