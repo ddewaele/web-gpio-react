@@ -8,7 +8,8 @@
   "main": "./lib/server",
   "scripts": {
     "start": "web-gpio-react",
-    "stop": "pkill --signal SIGINT web-gpio-react"
+    "stop": "pkill --signal SIGINT web-gpio-react",
+    "test": "echo \"Error: no test specified.\""
   },
   "files": [
     "LICENSE",
