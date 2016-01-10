@@ -18,5 +18,6 @@ deploy:
   api_key:
     secure: aWx5CQR7qWvXS/v9dOm/g9ku5cxFBnOvCmCOUDDBGQSTl+M3NuFKetbOWK1Fzu33q5rbw+DNdiRqN4LXlvsVr6qWvJie+8/o2yEa4IKrtxOwPl8pgGFvOZvZJP8a9zz+xbpSgIcJypFjmTEMoDoS/2+geI0u0ekFEgmfIRpvYWPESOCmq9uXokSytx85ZCKpjhiRUfCc9FESbEmtXoO/O08cwKe5ULtTM/G83fGNm34Ls+eITrdlxvcyYT18hpBdQGjLEqRkfANatkxml7LwXHs5CSSTjc6UGEw/7MvHkSjmjZvc9TjH8LcX9Yax3NKUIFe6Emh5kF4iLqpE3Wyv/WVPNtAXcDghqPxe30S0JRuSmzu022fXCXS5azO9tJrneZ6vm9olDy6DEzd/yk2PrydfZlrVUCH/jl9/ah/kb0udZ0oGs0/PWL16lu0B1ChKID/LZUcbi2cztM5WEYu9iXp1LfljZUcsSLLU02620g4bZhP9IHqU0hiBuEu+C+ZskOZHhgkHQfwlnvCVQWxML9KpvPNLbeSqFdux8Jn4YjwUedkxx43KZ6ZOwOAVrmAU/h26Bb8uglHeGOXRLFDqPECBsWm+IjRnBGBx1ruuv2XK8hfCHEnPUFdP+YCp2k6rD62PsXT/JT8o3fnSX5gDOAlNsxzY/ZgSv5o56uB15Rc=
   on:
+    all_branches: true
     tags: true
     repo: ddewaele/web-gpio-react
