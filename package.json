@@ -8,7 +8,7 @@
   "main": "./lib/server",
   "scripts": {
     "start": "node server.js",
-    "test": "NODE_ENV=test mocha --recursive --compilers js:babel-core/register --require ./test/setup.js",
+    "test": "NODE_ENV=test mocha --recursive --compilers js:babel-core/register --require ./test/setup.js && npm run build",
     "test:watch": "npm test -- --watch",
     "stop": "pkill --signal SIGINT web-gpio-react",
     "build": "NODE_ENV=production webpack --progress --config webpack.config.prod.js"
