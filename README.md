@@ -2,7 +2,6 @@
 
 ## Introduction
 
-
 Sample ReactJS project acting as a frontend for my UDOO Neo / Rasperry PI. 
 
 The software consists of a frontend (ReactJS) and backend (NodeJS) enabeling you to 
