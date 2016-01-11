@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ddewaele/web-gpio-react.svg?branch=master)](https://travis-ci.org/ddewaele/web-gpio-react)
+
 ## Introduction
 
 **Note:** This is the ES6 migration branch where I'm currently converting everything to ES6
@@ -27,7 +29,7 @@ More details can be found below:
 
 You can install this module using the node package manager (npm) like this:
 ```
-sudo npm install https://github.com/ddewaele/web-gpio-react#0.0.1 -g
+sudo npm install web-gpio-react -g
 ```
 
 In order to start the server manually simply execute the following command

@@ -8,6 +8,7 @@ _SpecRunner.html
 __benchmarks__
 dist/
 build/
+dist/
 .module-cache
 *.gem
 docs/.bundle
