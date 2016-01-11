@@ -4,6 +4,9 @@ import React, { Component, PropTypes } from 'react';
 import $ from 'jquery';
 import RestApi from '../RestApi/RestApi';
 import {Modal,Button} from 'react-bootstrap';
+
+import './Gpio.css';
+
 /*
  | <Gpio> component representing a single GPIO.
  |

@@ -12,6 +12,7 @@ git add .
 git commit -m "travis config change"
 git push
 npm version 0.0.6 -m "Upgrade to %s"
+git push
 ```
 
 This should also bump a new version to npmjs.org
@@ -35,7 +36,7 @@ List all globally installed packages
 npm list --depth=0 -g
 ```
 
-List current installed version of package
+List latest version of a package
 
 ```
 npm view web-gpio-react version
@@ -54,7 +55,7 @@ npm view web-gpio-react versions
 
 ## Alpha versions
 
-npm version 0.1.0-alpha1 -m "Prepping alpha version %s"
+npm version 0.1.0-alpha2 -m "Prepping alpha version %s"
 
 
 ## References
