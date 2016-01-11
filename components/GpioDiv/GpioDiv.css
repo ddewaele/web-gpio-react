@@ -1,0 +1,6 @@
+.gpioTag {
+   float: left;
+   position: absolute;
+   cursor: pointer; 
+   cursor: hand;
+}
